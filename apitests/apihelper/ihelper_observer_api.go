@@ -23,12 +23,16 @@ import (
 	"testing"
 )
 
+const (
+	observerUrl = "https://wallet-front.qa-wallet.k8s-dev.insolar.io"
+)
+
 var observerObserverApi = GetObserverClient().ObserverApi
 var observerInformationApi = GetObserverClient().InformationApi
 
 func GetObserverClient() *insolar_observer_api.APIClient {
 	c := insolar_observer_api.Configuration{
-		BasePath: url,
+		BasePath: observerUrl,
 	}
 	return insolar_observer_api.NewAPIClient(&c)
 }

@@ -28,10 +28,11 @@ import (
 var id int32 = 0
 
 const (
-	url            = "http://localhost:19102"
+	url = "http://localhost:19102"
+	//url            = observerUrl
 	JSONRPCVersion = "2.0"
-	//ApiCall        = "api.call"
-	ContractCall = "contract.call"
+	ContractCall   = "contract.call"
+
 	//information_api
 	GetSeedMethod = "node.getSeed"
 	GetInfoMethod = "network.getInfo"
@@ -73,8 +74,8 @@ func GetSeed(t *testing.T) string {
 func GetSeedRequest(t *testing.T, r insolar_api.NodeGetSeedRequest) string {
 	apilogger.LogApiRequest(GetSeedMethod, r, nil)
 	response, http, err := informationApi.GetSeed(nil, r)
-	require.Nil(t, err)
 	apilogger.LogApiResponse(http, response)
+	require.Nil(t, err)
 	CheckResponseHasNoError(t, response)
 	return response.Result.Seed
 }
@@ -88,8 +89,8 @@ func GetInfo(t *testing.T) insolar_api.NetworkGetInfoResponse200Result {
 	}
 	apilogger.LogApiRequest(GetInfoMethod, infoBody, nil)
 	response, http, err := informationApi.GetInfo(nil, infoBody)
-	require.Nil(t, err)
 	apilogger.LogApiResponse(http, response)
+	require.Nil(t, err)
 	CheckResponseHasNoError(t, response)
 
 	return response.Result
@@ -144,8 +145,8 @@ func (member *MemberObject) GetMember(t *testing.T) insolar_api.MemberGetRespons
 	d, s, m := Sign(request, member.Signature.PrivateKey)
 	apilogger.LogApiRequest(MemberGetMethod, request, m)
 	response, http, err := memberApi.MemberGet(nil, d, s, request)
-	require.Nil(t, err)
 	apilogger.LogApiResponse(http, response)
+	require.Nil(t, err)
 	CheckResponseHasNoError(t, response)
 	return response
 }
