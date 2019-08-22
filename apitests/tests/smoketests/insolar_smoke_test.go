@@ -29,15 +29,6 @@ import (
 
 // Information api
 
-// TODO method has been moved to observer
-// func TestGetInfo(t *testing.T) {
-// 	response := apihelper.GetInfo(t)
-// 	require.NotEmpty(t, response.RootDomain)
-// 	require.NotEmpty(t, response.RootMember)
-// 	require.NotEmpty(t, response.NodeDomain)
-// 	require.NotEmpty(t, response.TraceID)
-// }
-
 func TestGetSeed(t *testing.T) {
 	seed := apihelper.GetSeed(t)
 	require.NotEmpty(t, seed)

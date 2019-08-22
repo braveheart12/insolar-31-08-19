@@ -26,27 +26,6 @@ import (
 var observerObserverApi = GetObserverClient().ObserverApi
 var observerInformationApi = GetObserverClient().InformationApi
 
-// TODO why not visible? (method has been moved from insolar_api)
-// func GetInfo(t *testing.T) insolar_observer_api.NetworkGetInfoResponse200Result {
-// 	infoBody := insolar_observer_api.NetworkGetInfoRequest{
-// 		Jsonrpc: JSONRPCVersion,
-// 		Id:      GetRequestId(),
-// 		Method:  GetInfoMethod,
-// 		Params:  nil,
-// 	}
-// 	apilogger.LogApiRequest(GetInfoMethod, infoBody, nil)
-// 	response, http, err := informationApi.GetInfo(nil, infoBody)
-// 	require.Nil(t, err)
-// 	apilogger.LogApiResponse(http, response)
-// 	CheckResponseHasNoError(t, response)
-//
-// 	return response.Result
-// }
-//
-// func GetRootMember(t *testing.T) string {
-// 	return GetInfo(t).RootMember
-// }
-
 func GetObserverClient() *insolar_observer_api.APIClient {
 	c := insolar_observer_api.Configuration{
 		BasePath: url,
@@ -55,7 +34,7 @@ func GetObserverClient() *insolar_observer_api.APIClient {
 }
 
 func Notification(t *testing.T) insolar_observer_api.NotificationResponse200 {
-	apilogger.LogApiRequest("notification", nil, nil)
+	apilogger.LogApiRequest("get /api/notification", nil, nil)
 	response, http, err := observerInformationApi.Notification(nil)
 	apilogger.LogApiResponse(http, response)
 	require.Nil(t, err)
@@ -64,7 +43,7 @@ func Notification(t *testing.T) insolar_observer_api.NotificationResponse200 {
 }
 
 func Balance(t *testing.T, reference string) insolar_observer_api.BalanceResponse200 {
-	apilogger.LogApiRequest("balance", nil, nil)
+	apilogger.LogApiRequest("get /api/balance", nil, nil)
 	apilogger.Println("reference = " + reference)
 	response, http, err := observerObserverApi.Balance(nil, reference)
 	apilogger.LogApiResponse(http, response)
@@ -74,7 +53,7 @@ func Balance(t *testing.T, reference string) insolar_observer_api.BalanceRespons
 }
 
 func Fee(t *testing.T, amount string) insolar_observer_api.FeeResponse200 {
-	apilogger.LogApiRequest("fee", nil, nil)
+	apilogger.LogApiRequest("get /api/fee", nil, nil)
 	apilogger.Println("amount = " + amount)
 	response, http, err := observerObserverApi.Fee(nil, amount)
 	apilogger.LogApiResponse(http, response)
@@ -84,7 +63,7 @@ func Fee(t *testing.T, amount string) insolar_observer_api.FeeResponse200 {
 }
 
 func Member(t *testing.T, reference string) insolar_observer_api.MemberResponse200 {
-	apilogger.LogApiRequest("member", nil, nil)
+	apilogger.LogApiRequest("get /api/member", nil, nil)
 	apilogger.Println("reference = " + reference)
 	response, http, err := observerObserverApi.Member(nil, reference)
 	apilogger.LogApiResponse(http, response)
@@ -94,7 +73,7 @@ func Member(t *testing.T, reference string) insolar_observer_api.MemberResponse2
 }
 
 func Transaction(t *testing.T, txId string) insolar_observer_api.TransactionResponse200 {
-	apilogger.LogApiRequest("transaction", nil, nil)
+	apilogger.LogApiRequest("get /api/transaction", nil, nil)
 	apilogger.Println("txId = " + txId)
 	response, http, err := observerObserverApi.Transaction(nil, txId)
 	apilogger.LogApiResponse(http, response)
@@ -103,7 +82,7 @@ func Transaction(t *testing.T, txId string) insolar_observer_api.TransactionResp
 	return response
 }
 func TransactionList(t *testing.T, reference string) []insolar_observer_api.InlineResponse200 {
-	apilogger.LogApiRequest("transaction list", nil, nil)
+	apilogger.LogApiRequest("get /api/transactionList", nil, nil)
 	apilogger.Println("reference = " + reference)
 	response, http, err := observerObserverApi.TransactionList(nil, reference)
 	apilogger.LogApiResponse(http, response)

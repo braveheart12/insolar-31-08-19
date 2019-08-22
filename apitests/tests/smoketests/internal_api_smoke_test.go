@@ -80,3 +80,11 @@ func TestGetStatus(t *testing.T) {
 	require.NotEmpty(t, response.PulseNumber)
 	require.NotEmpty(t, response.Version)
 }
+
+func TestGetInfo(t *testing.T) {
+	response := apihelper.GetInfo(t)
+	require.NotEmpty(t, response.RootDomain)
+	require.NotEmpty(t, response.RootMember)
+	require.NotEmpty(t, response.NodeDomain)
+	require.NotEmpty(t, response.TraceID)
+}
