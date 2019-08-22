@@ -13,35 +13,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-
 package apihelper
 
 import (
 	"log"
 	"testing"
 
+	"github.com/insolar/insolar/apitests/apiclient/insolar_api"
 	"github.com/insolar/insolar/apitests/apihelper/apilogger"
-	"github.com/insolar/insolar/apitests/scripts/insolar_api"
 	"github.com/stretchr/testify/require"
 )
 
 var id int32 = 0
 
 const (
-	url = "http://localhost:19102"
-	//url            = observerUrl
+	url            = "http://localhost:19102"
 	JSONRPCVersion = "2.0"
-	ContractCall   = "contract.call"
-
-	//information_api
+	// ApiCall        = "api.call"
+	ContractCall = "contract.call"
+	// information_api
 	GetSeedMethod = "node.getSeed"
 	GetInfoMethod = "network.getInfo"
 
-	//member_api
+	// member_api
 	MemberCreateMethod   = "member.create"
 	MemberTransferMethod = "member.transfer"
 	MemberGetMethod      = "member.get"
-	//migration_api
+	// migration_api
 	MemberMigrationCreateMethod = "member.migrationCreate"
 	DepositTransferMethod       = "deposit.transfer"
 )
@@ -74,30 +72,10 @@ func GetSeed(t *testing.T) string {
 func GetSeedRequest(t *testing.T, r insolar_api.NodeGetSeedRequest) string {
 	apilogger.LogApiRequest(GetSeedMethod, r, nil)
 	response, http, err := informationApi.GetSeed(nil, r)
-	apilogger.LogApiResponse(http, response)
 	require.Nil(t, err)
+	apilogger.LogApiResponse(http, response)
 	CheckResponseHasNoError(t, response)
 	return response.Result.Seed
-}
-
-func GetInfo(t *testing.T) insolar_api.NetworkGetInfoResponse200Result {
-	infoBody := insolar_api.NetworkGetInfoRequest{
-		Jsonrpc: JSONRPCVersion,
-		Id:      GetRequestId(),
-		Method:  GetInfoMethod,
-		Params:  nil,
-	}
-	apilogger.LogApiRequest(GetInfoMethod, infoBody, nil)
-	response, http, err := informationApi.GetInfo(nil, infoBody)
-	apilogger.LogApiResponse(http, response)
-	require.Nil(t, err)
-	CheckResponseHasNoError(t, response)
-
-	return response.Result
-}
-
-func GetRootMember(t *testing.T) string {
-	return GetInfo(t).RootMember
 }
 
 func CreateMember(t *testing.T) MemberObject {
@@ -145,8 +123,8 @@ func (member *MemberObject) GetMember(t *testing.T) insolar_api.MemberGetRespons
 	d, s, m := Sign(request, member.Signature.PrivateKey)
 	apilogger.LogApiRequest(MemberGetMethod, request, m)
 	response, http, err := memberApi.MemberGet(nil, d, s, request)
-	apilogger.LogApiResponse(http, response)
 	require.Nil(t, err)
+	apilogger.LogApiResponse(http, response)
 	CheckResponseHasNoError(t, response)
 	return response
 }

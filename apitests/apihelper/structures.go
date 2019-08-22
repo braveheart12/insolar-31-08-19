@@ -20,7 +20,7 @@ import (
 	"crypto/ecdsa"
 	"math/big"
 
-	"github.com/insolar/insolar/apitests/scripts/insolar_api"
+	"github.com/insolar/insolar/apitests/apiclient/insolar_api"
 )
 
 type MemberSignature struct {

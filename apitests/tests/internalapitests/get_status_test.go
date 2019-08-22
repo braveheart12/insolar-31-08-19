@@ -20,9 +20,9 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/insolar/insolar/apitests/apiclient/insolar_internal_api"
 	"github.com/insolar/insolar/apitests/apihelper"
 	"github.com/insolar/insolar/apitests/apihelper/apilogger"
-	"github.com/insolar/insolar/apitests/scripts/insolar_internal_api"
 	"github.com/insolar/insolar/apitests/tests"
 	"github.com/insolar/insolar/testutils"
 	"github.com/stretchr/testify/require"

@@ -2,10 +2,9 @@ package apitests
 
 import (
 	"os"
+	"testing"
 
 	"github.com/insolar/insolar/testutils/launchnet"
-
-	"testing"
 )
 
 // var IsLaunchnetRunning bool

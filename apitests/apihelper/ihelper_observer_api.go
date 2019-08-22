@@ -13,14 +13,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-
 package apihelper
 
 import (
-	"github.com/insolar/insolar/apitests/apihelper/apilogger"
-	"github.com/insolar/insolar/apitests/scripts/insolar_observer_api"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/insolar/insolar/apitests/apiclient/insolar_observer_api"
+	"github.com/insolar/insolar/apitests/apihelper/apilogger"
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -29,6 +29,27 @@ const (
 
 var observerObserverApi = GetObserverClient().ObserverApi
 var observerInformationApi = GetObserverClient().InformationApi
+
+// TODO why not visible? (method has been moved from insolar_api)
+// func GetInfo(t *testing.T) insolar_observer_api.NetworkGetInfoResponse200Result {
+// 	infoBody := insolar_observer_api.NetworkGetInfoRequest{
+// 		Jsonrpc: JSONRPCVersion,
+// 		Id:      GetRequestId(),
+// 		Method:  GetInfoMethod,
+// 		Params:  nil,
+// 	}
+// 	apilogger.LogApiRequest(GetInfoMethod, infoBody, nil)
+// 	response, http, err := informationApi.GetInfo(nil, infoBody)
+// 	require.Nil(t, err)
+// 	apilogger.LogApiResponse(http, response)
+// 	CheckResponseHasNoError(t, response)
+//
+// 	return response.Result
+// }
+//
+// func GetRootMember(t *testing.T) string {
+// 	return GetInfo(t).RootMember
+// }
 
 func GetObserverClient() *insolar_observer_api.APIClient {
 	c := insolar_observer_api.Configuration{

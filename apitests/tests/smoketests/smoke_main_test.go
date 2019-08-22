@@ -14,9 +14,7 @@
 // limitations under the License.
 //
 
-// +build functest
-
-package smoke
+package smoketests
 
 import (
 	"testing"

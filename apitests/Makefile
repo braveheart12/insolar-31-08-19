@@ -1,7 +1,7 @@
 TEST_COUNT ?= 1
 
 .PHONY: all
-all: codegen-latest tests ## run api tests
+all: codegen-latest smoke ## run api tests
 
 .PHONY: tests
 tests: ## run api tests
@@ -9,7 +9,7 @@ tests: ## run api tests
 
 .PHONY: smoke
 smoke: ## run api smoke tests
-	go test ./tests/smoke -count=$(TEST_COUNT)
+	CGO_ENABLED=1 go test -test.v ./tests/smoketests -count=$(TEST_COUNT)
 
 .PHONY: codegen-latest
 codegen-latest: pull codegen ## generate api client from latet repo state
@@ -23,3 +23,8 @@ pull: ## get actual state in api respositories
 codegen: ## generate api client
 #	chmod +x apiclient/generate-api-cli.sh
 	. scripts/generate-api-cli.sh
+
+.PHONY: watch
+watch: ## start all web specs on localhost
+#	chmod +x apiclient/generate-api-cli.sh
+	. scripts/watch-api-frontend.sh

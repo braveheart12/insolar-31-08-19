@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-package smoke
+package smoketests
 
 import (
 	"testing"

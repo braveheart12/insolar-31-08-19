@@ -13,30 +13,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-
 package apihelper
 
 import (
 	"testing"
 
+	"github.com/insolar/insolar/apitests/apiclient/insolar_internal_api"
 	"github.com/insolar/insolar/apitests/apihelper/apilogger"
-	"github.com/insolar/insolar/apitests/scripts/insolar_internal_api"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/require"
 )
 
 const (
-
-	//information_api
+	// information_api
 	GetStatusMethod = "node.getStatus"
-	//migration_api
+	// migration_api
 	MigrationAddAddresses = "migration.addAddresses"
 	MigrationGetInfo      = "migration.getInfo"
 	DepositMigration      = "deposit.migration"
 	DeactivateDaemon      = "migration.deactivateDaemon"
 	ActivateDaemon        = "migration.activateDaemon"
 
-	//member api
+	// member api
 	MemberGetBalance = "member.getBalance"
 )
 
@@ -100,20 +98,20 @@ func AddMigrationAddresses(t *testing.T) insolar_internal_api.MigrationDeactivat
 	return response
 }
 
-func GetMigrationInfo(t *testing.T) insolar_internal_api.MigrationGetInfoResponse200 {
-	body := insolar_internal_api.MigrationGetInfoRequest{
-		Jsonrpc: JSONRPCVersion,
-		Id:      GetRequestId(),
-		Method:  MigrationGetInfo,
-		Params:  nil,
-	}
-	apilogger.LogApiRequest(MigrationGetInfo, body, nil)
-	response, http, err := internalMigrationApi.GetInfo(nil, body)
-	require.Nil(t, err)
-	apilogger.LogApiResponse(http, response)
-	require.NotEmpty(t, response.Result.MigrationAdminMember)
-	return response
-}
+//func GetMigrationInfo(t *testing.T) insolar_internal_api.MigrationGetInfoResponse200 {
+//	body := insolar_internal_api.MigrationGetInfoRequest{
+//		Jsonrpc: JSONRPCVersion,
+//		Id:      GetRequestId(),
+//		Method:  MigrationGetInfo,
+//		Params:  nil,
+//	}
+//	apilogger.LogApiRequest(MigrationGetInfo, body, nil)
+//	response, http, err := internalMigrationApi.GetInfo(nil, body)
+//	require.Nil(t, err)
+//	apilogger.LogApiResponse(http, response)
+//	require.NotEmpty(t, response.Result.MigrationAdminMember)
+//	return response
+//}
 
 func MigrationDeposit(t *testing.T) insolar_internal_api.DepositMigrationResponse200 {
 	body := insolar_internal_api.DepositMigrationRequest{
@@ -140,7 +138,7 @@ func MigrationDeposit(t *testing.T) insolar_internal_api.DepositMigrationRespons
 	return response
 }
 
-func ObserverToken(t *testing.T) map[string]interface{} {
+func ObserverToken(t *testing.T) insolar_internal_api.TokenResponse200 {
 	response, http, err := internalObserverApi.TokenGetInfo(nil)
 	require.Nil(t, err)
 	apilogger.LogApiResponse(http, response)
@@ -181,13 +179,13 @@ func MigrationDeactivateDaemon(t *testing.T, migrationDaemonReference string) in
 			Seed:     GetSeed(t),
 			CallSite: DeactivateDaemon,
 			CallParams: insolar_internal_api.MigrationDeactivateDaemonRequestParamsCallParams{
-				Reference: migrationDaemonReference, //migrationdaemon
+				Reference: migrationDaemonReference, // migrationdaemon
 			},
-			PublicKey: "", //admin
-			Reference: "", //admin
+			PublicKey: "", // admin
+			Reference: "", // admin
 		},
 	}
-	//d, s, m := Sign(body, admin.PrivateKey)
+	// d, s, m := Sign(body, admin.PrivateKey)
 	apilogger.LogApiRequest(MigrationAddAddresses, body, nil)
 	response, http, err := internalMigrationApi.MigrationDeactivateDaemon(nil, "", "", body)
 	require.Nil(t, err)
@@ -207,13 +205,13 @@ func MigrationActivateDaemon(t *testing.T, migrationDaemonReference string) inso
 			Seed:     GetSeed(t),
 			CallSite: ActivateDaemon,
 			CallParams: insolar_internal_api.MigrationActivateDaemonRequestParamsCallParams{
-				Reference: migrationDaemonReference, //migrationdaemon
+				Reference: migrationDaemonReference, // migrationdaemon
 			},
-			PublicKey: "", //admin
-			Reference: "", //admin
+			PublicKey: "", // admin
+			Reference: "", // admin
 		},
 	}
-	//d, s, m := Sign(body, admin.PrivateKey)
+	// d, s, m := Sign(body, admin.PrivateKey)
 	apilogger.LogApiRequest(MigrationAddAddresses, body, nil)
 	response, http, err := internalMigrationApi.MigrationChangeDaemon(nil, "", "", body)
 	require.Nil(t, err)
@@ -223,6 +221,6 @@ func MigrationActivateDaemon(t *testing.T, migrationDaemonReference string) inso
 	return response
 }
 
-func getMigrationAdmin(t *testing.T) string {
-	return GetMigrationInfo(t).Result.MigrationAdminMember
-}
+//func getMigrationAdmin(t *testing.T) string {
+//	return GetMigrationInfo(t).Result.MigrationAdminMember
+//}
