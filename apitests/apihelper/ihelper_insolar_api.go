@@ -29,8 +29,7 @@ var id int32 = 0
 const (
 	url            = "http://localhost:19102"
 	JSONRPCVersion = "2.0"
-	// ApiCall        = "api.call"
-	ContractCall = "contract.call"
+	ContractCall   = "contract.call"
 	// information_api
 	GetSeedMethod = "node.getSeed"
 
@@ -122,9 +121,8 @@ func (member *MemberObject) GetMember(t *testing.T) insolar_api.MemberGetRespons
 	d, s, m := Sign(request, member.Signature.PrivateKey)
 	apilogger.LogApiRequest(request.Params.CallSite, request, m)
 	response, http, err := memberApi.MemberGet(nil, d, s, request)
-	require.Nil(t, err)
 	apilogger.LogApiResponse(http, response)
-	CheckResponseHasNoError(t, response)
+	require.Nil(t, err)
 	return response
 }
 
@@ -150,8 +148,6 @@ func (member *MemberObject) Transfer(t *testing.T, toMemberRef string, amount st
 	response, http, err := memberApi.MemberTransfer(nil, d, s, request)
 	require.Nil(t, err)
 	apilogger.LogApiResponse(http, response)
-	CheckResponseHasNoError(t, response)
-	apilogger.Println("Transfer OK. Fee: " + response.Result.CallResult.Fee)
 	return response
 }
 

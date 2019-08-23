@@ -24,6 +24,7 @@ import (
 	"testing"
 
 	"github.com/insolar/insolar/apitests/apihelper"
+	"github.com/insolar/insolar/apitests/apihelper/apilogger"
 	"github.com/stretchr/testify/require"
 )
 
@@ -45,12 +46,15 @@ func TestMemberTransfer(t *testing.T) {
 	member1 := apihelper.CreateMember(t)
 	member2 := apihelper.CreateMember(t)
 	transfer := member1.Transfer(t, member2.MemberReference, "1")
+	apihelper.CheckResponseHasNoError(t, transfer)
+	apilogger.Println("Transfer OK. Fee: " + transfer.Result.CallResult.Fee)
 	require.NotEmpty(t, transfer.Result.CallResult.Fee, "Fee")
 }
 
 func TestGetMember(t *testing.T) {
 	member1 := apihelper.CreateMember(t)
 	resp := member1.GetMember(t)
+	apihelper.CheckResponseHasNoError(t, resp)
 	require.Equal(t, member1.MemberReference, resp.Result.CallResult.Reference, "Reference")
 	require.Empty(t, resp.Result.CallResult.MigrationAddress, "MigrationAddress")
 }

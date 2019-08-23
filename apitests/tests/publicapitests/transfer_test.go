@@ -18,6 +18,7 @@ package publicapitests
 
 import (
 	"github.com/insolar/insolar/apitests/apihelper"
+	"github.com/insolar/insolar/apitests/tests"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
@@ -25,16 +26,22 @@ import (
 func TestMemberMinusTransfer(t *testing.T) {
 	member1 := apihelper.CreateMember(t)
 	member2 := apihelper.CreateMember(t)
-	//transfer := member1.Transfer(t, member2.MemberReference, "-1")//INS-2183
-	transfer := member1.Transfer(t, member2.MemberReference, "0") //INS-2184
-	require.Equal(t, transfer.Error.Code, -32000)
-	require.Equal(t, transfer.Error.Message, "[ makeCall ] Error in called method: amount must be larger then zero")
+	input := []string{"-1", //INS-2183
+		"+0",
+		"0", //INS-2184
+		"-0"}
+	for _, v := range input {
+		transfer := member1.Transfer(t, member2.MemberReference, v)
+		expErr := tests.TestError{-32000, "[ makeCall ] Error in called method: amount must be larger then zero"}
+		require.Equal(t, expErr.Code, transfer.Error.Code)
+		require.Equal(t, expErr.Message, transfer.Error.Message)
+	}
 }
 
 func TestMemberTransferToBadMember(t *testing.T) {
 	member1 := apihelper.CreateMember(t)
-	transfer := member1.Transfer(t, "5gFY3nZ5uDPCCU2MwQbFSQ17XA2b1eUo9xp3p8AkdAB.11111111111111111111111111111111", "100") //INS-2185
-	require.Equal(t, transfer.Error.Code, -32000)
-	require.Equal(t, transfer.Error.Message, "[ makeCall ] Error in called method: amount must be larger then zero")
-
+	transfer := member1.Transfer(t, "5gFY3nZ5uDPCCU2MwQbFSQ17XA2b1eUo9xp3p8AkdAB.11111111111111111111111111111111", "100")
+	error := tests.TestError{-32000, "member not found"} //https://insolar.atlassian.net/browse/INS-3309
+	require.Equal(t, error.Code, transfer.Error.Code)
+	require.Equal(t, error.Message, transfer.Error.Message)
 }
