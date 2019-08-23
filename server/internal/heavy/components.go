@@ -20,7 +20,9 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"path/filepath"
 
+	"github.com/dgraph-io/badger"
 	"github.com/insolar/insolar/network"
 
 	"github.com/insolar/insolar/ledger/heavy/exporter"
@@ -48,7 +50,6 @@ import (
 	"github.com/insolar/insolar/configuration"
 	"github.com/insolar/insolar/contractrequester"
 	"github.com/insolar/insolar/cryptography"
-	"github.com/insolar/insolar/genesisdataprovider"
 	"github.com/insolar/insolar/insolar"
 	"github.com/insolar/insolar/insolar/bus"
 	"github.com/insolar/insolar/insolar/delegationtoken"
@@ -73,12 +74,13 @@ import (
 )
 
 type components struct {
-	cmp       component.Manager
-	NodeRef   string
-	NodeRole  string
-	rollback  *executor.DBRollback
-	inRouter  *watermillMsg.Router
-	outRouter *watermillMsg.Router
+	cmp         component.Manager
+	NodeRef     string
+	NodeRole    string
+	rollback    *executor.DBRollback
+	stateKeeper *executor.InitialStateKeeper
+	inRouter    *watermillMsg.Router
+	outRouter   *watermillMsg.Router
 
 	replicator executor.HeavyReplicator
 }
@@ -168,20 +170,14 @@ func newComponents(ctx context.Context, cfg configuration.Configuration, genesis
 
 	// API.
 	var (
-		Requester       insolar.ContractRequester
-		GenesisProvider insolar.GenesisDataProvider
-		API             insolar.APIRunner
+		Requester insolar.ContractRequester
+		API       insolar.APIRunner
 	)
 	{
 		var err error
 		Requester, err = contractrequester.New(nil)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to start ContractRequester")
-		}
-
-		GenesisProvider, err = genesisdataprovider.New()
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to start GenesisDataProvider")
 		}
 
 		API, err = api.NewRunner(&cfg.APIRunner)
@@ -200,7 +196,11 @@ func newComponents(ctx context.Context, cfg configuration.Configuration, genesis
 	)
 	{
 		var err error
-		DB, err = store.NewBadgerDB(cfg.Ledger.Storage.DataDirectory)
+		fullDataDirectoryPath, err := filepath.Abs(cfg.Ledger.Storage.DataDirectory)
+		if err != nil {
+			panic(errors.Wrap(err, "failed to get absolute path for DataDirectory"))
+		}
+		DB, err = store.NewBadgerDB(badger.DefaultOptions(fullDataDirectoryPath))
 		if err != nil {
 			panic(errors.Wrap(err, "failed to initialize DB"))
 		}
@@ -260,6 +260,7 @@ func newComponents(ctx context.Context, cfg configuration.Configuration, genesis
 		drops := drop.NewDB(DB)
 		JetKeeper = executor.NewJetKeeper(Jets, DB, Pulses)
 		c.rollback = executor.NewDBRollback(JetKeeper, Pulses, drops, Records, indexes, Jets, Pulses)
+		c.stateKeeper = executor.NewInitialStateKeeper(JetKeeper, Jets, Coordinator, indexes, drops)
 
 		sp := pulse.NewStartPulse()
 
@@ -287,7 +288,6 @@ func newComponents(ctx context.Context, cfg configuration.Configuration, genesis
 		h.JetCoordinator = Coordinator
 		h.IndexAccessor = indexes
 		h.IndexModifier = indexes
-		h.Bus = Bus
 		h.DropModifier = drops
 		h.PCS = CryptoScheme
 		h.PulseAccessor = Pulses
@@ -298,6 +298,7 @@ func newComponents(ctx context.Context, cfg configuration.Configuration, genesis
 		h.JetTree = Jets
 		h.DropDB = drops
 		h.JetKeeper = JetKeeper
+		h.InitialStateReader = c.stateKeeper
 		h.BackupMaker = backupMaker
 		h.Sender = WmBus
 		h.Replicator = replicator
@@ -368,7 +369,6 @@ func newComponents(ctx context.Context, cfg configuration.Configuration, genesis
 		Tokens,
 		Parcels,
 		artifacts.NewClient(WmBus),
-		GenesisProvider,
 		API,
 		KeyProcessor,
 		Termination,
@@ -398,7 +398,12 @@ func newComponents(ctx context.Context, cfg configuration.Configuration, genesis
 func (c *components) Start(ctx context.Context) error {
 	err := c.rollback.Start(ctx)
 	if err != nil {
-		return errors.Wrap(err, "rollback.Start return error: ")
+		return errors.Wrapf(err, "rollback.Start return error: %s", err.Error())
+	}
+
+	err = c.stateKeeper.Start(ctx)
+	if err != nil {
+		return errors.Wrapf(err, "stateKeeper.Start return error: %s", err.Error())
 	}
 	return c.cmp.Start(ctx)
 }
