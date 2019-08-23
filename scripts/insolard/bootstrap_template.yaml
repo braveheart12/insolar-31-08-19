@@ -11,11 +11,11 @@ root_balance: "0"
 md_balance: "50000000000000000000"
 lokup_pulse_period: 10
 vesting_pulse_period: 10
-majority_rule: 5
+majority_rule: 0
 min_roles:
   heavy_material: 1
-  virtual:  2
-  light_material: 2
+  virtual:  0
+  light_material: 5
 # TODO: check pulsar_public_keys usage
 pulsar_public_keys:
   - "pulsar_public_key"
@@ -26,7 +26,7 @@ discovery_nodes:
     cert_name: "discovery_cert_1.json"
   -
     host: "127.0.0.1:23832"
-    role: "virtual"
+    role: "light_material"
     cert_name: "discovery_cert_2.json"
   -
     host: "127.0.0.1:33833"
@@ -34,16 +34,16 @@ discovery_nodes:
     cert_name: "discovery_cert_3.json"
   -
     host: "127.0.0.1:43834"
-    role: "virtual"
+    role: "light_material"
     cert_name: "discovery_cert_4.json"
   -
     host: "127.0.0.1:53835"
     role: "light_material"
     cert_name: "discovery_cert_5.json"
-#  -
-#    host: "127.0.0.1:53866"
-#    role: "virtual"
-#    cert_name: "discovery_cert_6.json"
+  -
+    host: "127.0.0.1:53866"
+    role: "virtual"
+    cert_name: "discovery_cert_6.json"
 #  -
 #    host: "127.0.0.1:53877"
 #    role: "light_material"
@@ -113,32 +113,32 @@ discovery_nodes:
 #    role: "light_material"
 #    cert_name: "discovery_cert_23.json"
 
-#nodes:
-#  -
-#    host: "127.0.0.1:63836"
-#    role: "virtual"
-#    keys_file: "{{ .BaseDir }}/nodes/1/keys.json"
-#    cert_name: "node_cert_1.json"
-#  -
-#    host: "127.0.0.1:63846"
-#    role: "virtual"
-#    keys_file: "{{ .BaseDir }}/nodes/2/keys.json"
-#    cert_name: "node_cert_2.json"
-#  -
-#    host: "127.0.0.1:63856"
-#    role: "virtual"
-#    keys_file: "{{ .BaseDir }}/nodes/3/keys.json"
-#    cert_name: "node_cert_3.json"
-#  -
-#    host: "127.0.0.1:63866"
-#    role: "virtual"
-#    keys_file: "{{ .BaseDir }}/nodes/4/keys.json"
-#    cert_name: "node_cert_4.json"
-#  -
-#    host: "127.0.0.1:63876"
-#    role: "virtual"
-#    keys_file: "{{ .BaseDir }}/nodes/5/keys.json"
-#    cert_name: "node_cert_5.json"
+nodes:
+  -
+    host: "127.0.0.1:63836"
+    role: "virtual"
+    keys_file: "{{ .BaseDir }}/nodes/1/keys.json"
+    cert_name: "node_cert_1.json"
+  -
+    host: "127.0.0.1:63846"
+    role: "virtual"
+    keys_file: "{{ .BaseDir }}/nodes/2/keys.json"
+    cert_name: "node_cert_2.json"
+  -
+    host: "127.0.0.1:63856"
+    role: "virtual"
+    keys_file: "{{ .BaseDir }}/nodes/3/keys.json"
+    cert_name: "node_cert_3.json"
+  -
+    host: "127.0.0.1:63866"
+    role: "virtual"
+    keys_file: "{{ .BaseDir }}/nodes/4/keys.json"
+    cert_name: "node_cert_4.json"
+  -
+    host: "127.0.0.1:63876"
+    role: "virtual"
+    keys_file: "{{ .BaseDir }}/nodes/5/keys.json"
+    cert_name: "node_cert_5.json"
 #  -
 #    host: "127.0.0.1:63886"
 #    role: "virtual"
