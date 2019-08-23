@@ -196,7 +196,7 @@ func (sdk *SDK) CreateMember() (*Member, string, error) {
 		return nil, "", errors.Errorf("failed to cast reference: expected string, got %T", contractResultCasted["reference"])
 	}
 
-	return NewMember(memberRef, privateKeyStr, publicKeyStr), response.TraceID, nil
+	return NewMember(memberRef, privateKeyStr, publicKeyStr), response.RequestReference, nil
 }
 
 // addMigrationAddresses method add burn addresses

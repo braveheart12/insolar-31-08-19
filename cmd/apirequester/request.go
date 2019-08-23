@@ -26,9 +26,10 @@ import (
 
 func oneSimpleRequest(insSDK *sdk.SDK) {
 	fmt.Println("Try to create new member:")
-	m, traceID, err := insSDK.CreateMember()
+	m, requestRef, err := insSDK.CreateMember()
+	fmt.Println(requestRef)
 	check("Can not create member, error: ", err)
-	fmt.Println("Success! New member ref: ", m.Reference, ". TraceId: ", traceID)
+	fmt.Println("Success! New member ref: ", m.Reference, ". RequestReference: ", requestRef)
 	fmt.Print("oneSimpleRequest done just fine\n\n")
 }
 
