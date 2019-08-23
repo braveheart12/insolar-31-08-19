@@ -25,7 +25,7 @@ import (
 	"testing"
 )
 
-func TestGetMemberByBadReference(t *testing.T) {
+func TestGetNotExistMember(t *testing.T) {
 	ms, _ := apihelper.NewMemberSignature()
 	seed := apihelper.GetSeed(t)
 	request := insolar_api.MemberGetRequest{
