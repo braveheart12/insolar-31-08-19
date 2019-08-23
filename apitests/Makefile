@@ -1,4 +1,5 @@
 TEST_COUNT ?= 1
+TEST_ARGS ?=
 
 .PHONY: all
 all: codegen-latest smoke ## run api tests
@@ -9,7 +10,7 @@ tests: ## run api tests
 
 .PHONY: smoke
 smoke: ## run api smoke tests
-	CGO_ENABLED=1 go test -test.v ./tests/smoketests -count=$(TEST_COUNT)
+	CGO_ENABLED=1 go test -test.v ./tests/smoketests -count=$(TEST_COUNT) -tags smoke $(TEST_ARGS)
 
 .PHONY: codegen-latest
 codegen-latest: pull codegen ## generate api client from latet repo state

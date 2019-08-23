@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+// +build smoke
 
 package smoketests
 
@@ -20,11 +21,16 @@ import (
 	"testing"
 
 	"github.com/insolar/insolar/apitests/apihelper"
+	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/require"
 )
 
 func TestMigrationAddAddresses(t *testing.T) {
-	response := apihelper.AddMigrationAddresses(t)
+	uuids, err := uuid.NewV4()
+	if err != nil {
+		panic(err)
+	}
+	response := apihelper.AddMigrationAddresses(t, []string{uuids.String()})
 	require.NotEmpty(t, response.Result)
 	require.Empty(t, response.Error)
 }
@@ -73,4 +79,12 @@ func TestGetStatus(t *testing.T) {
 	require.Equal(t, true, response.Origin.IsWorking)
 	require.NotEmpty(t, response.PulseNumber)
 	require.NotEmpty(t, response.Version)
+}
+
+func TestGetInfo(t *testing.T) {
+	response := apihelper.GetInfo(t)
+	require.NotEmpty(t, response.RootDomain)
+	require.NotEmpty(t, response.RootMember)
+	require.NotEmpty(t, response.NodeDomain)
+	require.NotEmpty(t, response.TraceID)
 }

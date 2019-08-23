@@ -13,10 +13,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+// +build smoke
 
 package smoketests
 
 import (
+	"encoding/json"
+	"io/ioutil"
+	"path/filepath"
 	"testing"
 
 	"github.com/insolar/insolar/apitests/apihelper"
@@ -24,15 +28,6 @@ import (
 )
 
 // Information api
-
-// TODO method has been moved to observer
-// func TestGetInfo(t *testing.T) {
-// 	response := apihelper.GetInfo(t)
-// 	require.NotEmpty(t, response.RootDomain)
-// 	require.NotEmpty(t, response.RootMember)
-// 	require.NotEmpty(t, response.NodeDomain)
-// 	require.NotEmpty(t, response.TraceID)
-// }
 
 func TestGetSeed(t *testing.T) {
 	seed := apihelper.GetSeed(t)
@@ -62,13 +57,27 @@ func TestGetMember(t *testing.T) {
 
 // Migration api
 
-func TestDepositTransfer(t *testing.T) {
-	response := apihelper.DepositTransfer(t)
-	require.NotEmpty(t, response.Result.CallResult)
-}
-
 func TestMemberMigrationCreate(t *testing.T) {
-	var member = apihelper.MemberMigrationCreate(t)
+	// TODO everything related to migration.addAddresses move to 'before' function
+	absPath, _ := filepath.Abs("../resources/migration-addresses.json")
+	b, err := ioutil.ReadFile(absPath)
+	require.NoError(t, err)
+
+	type addressesList struct {
+		Addresses []string `json:"Addresses"`
+	}
+	list := addressesList{}
+	json.Unmarshal(b, &list)
+
+	response := apihelper.AddMigrationAddresses(t, list.Addresses)
+	require.NotNil(t, response)
+	member := apihelper.MemberMigrationCreate(t)
 	require.NotEmpty(t, member)
 	require.NotEmpty(t, member.MemberResponseResult)
+}
+
+func TestDepositTransfer(t *testing.T) {
+	member := apihelper.MemberMigrationCreate(t)
+	response := member.DepositTransfer(t)
+	require.NotEmpty(t, response.Result.CallResult)
 }
