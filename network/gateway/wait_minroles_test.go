@@ -52,6 +52,9 @@ package gateway
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	"github.com/gojuno/minimock"
 	"github.com/insolar/insolar/certificate"
 	"github.com/insolar/insolar/insolar"
@@ -60,8 +63,6 @@ import (
 	"github.com/insolar/insolar/network/node"
 	mock "github.com/insolar/insolar/testutils/network"
 	"github.com/stretchr/testify/assert"
-	"testing"
-	"time"
 )
 
 func TestWaitMinroles_MinrolesNotHappenedInETA(t *testing.T) {
@@ -104,7 +105,7 @@ func TestWaitMinroles_MinrolesHappenedInETA(t *testing.T) {
 
 	gatewayer := mock.NewGatewayerMock(mc)
 	gatewayer.SwitchStateMock.Set(func(ctx context.Context, state insolar.NetworkState, pulse insolar.Pulse) {
-		assert.Equal(t, insolar.CompleteNetworkState, state)
+		assert.Equal(t, insolar.WaitPulsar, state)
 	})
 
 	ref := gen.Reference()
