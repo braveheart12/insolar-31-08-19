@@ -51,47 +51,43 @@
 package gateway
 
 import (
-	"github.com/insolar/insolar/instrumentation/insmetrics"
-	"go.opencensus.io/stats"
-	"go.opencensus.io/stats/view"
-	"go.opencensus.io/tag"
+	"context"
+
+	"github.com/insolar/insolar/insolar"
+	"github.com/insolar/insolar/network"
 )
 
-var (
-	tagNodeRef = insmetrics.MustTagKey("nodeRef")
-)
+func newWaitPulsar(b *Base) *WaitPulsar {
+	return &WaitPulsar{b, make(chan insolar.Pulse, 1)}
+}
 
-var (
-	statBootstrapReconnectRequired = stats.Int64(
-		"network/bootstrap/reconnects",
-		"number of bootstrap requests that are required to be retried",
-		stats.UnitDimensionless,
-	)
-	statPulse = stats.Int64(
-		"current_pulse",
-		"current node pulse",
-		stats.UnitDimensionless,
-	)
-)
+type WaitPulsar struct {
+	*Base
+	pulseArrived chan insolar.Pulse
+}
 
-func init() {
-	tags := []tag.Key{tagNodeRef}
-	err := view.Register(
-		&view.View{
-			Name:        statBootstrapReconnectRequired.Name(),
-			Description: statBootstrapReconnectRequired.Description(),
-			Measure:     statBootstrapReconnectRequired,
-			Aggregation: view.Count(),
-			TagKeys:     tags,
-		},
-		&view.View{
-			Name:        statPulse.Name(),
-			Description: statPulse.Description(),
-			Measure:     statPulse,
-			Aggregation: view.LastValue(),
-		},
-	)
-	if err != nil {
-		panic(err)
+func (g *WaitPulsar) Run(ctx context.Context, pulse insolar.Pulse) {
+	g.switchOnRealPulse(pulse)
+
+	select {
+	case <-g.bootstrapTimer.C:
+		g.Gatewayer.FailState(ctx, "Bootstrap timeout exceeded")
+	case newPulse := <-g.pulseArrived:
+		g.Gatewayer.SwitchState(ctx, insolar.CompleteNetworkState, newPulse)
+	}
+}
+
+func (g *WaitPulsar) GetState() insolar.NetworkState {
+	return insolar.WaitPulsar
+}
+
+func (g *WaitPulsar) OnConsensusFinished(ctx context.Context, report network.Report) {
+	g.switchOnRealPulse(EnsureGetPulse(ctx, g.PulseAccessor, report.PulseNumber))
+}
+
+func (g *WaitPulsar) switchOnRealPulse(pulse insolar.Pulse) {
+	if pulse.PulseNumber > insolar.FirstPulseNumber && pulse.EpochPulseNumber > insolar.EphemeralPulseEpoch {
+		g.pulseArrived <- pulse
+		close(g.pulseArrived)
 	}
 }
