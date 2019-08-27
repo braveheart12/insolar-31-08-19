@@ -24,7 +24,7 @@ import (
 )
 
 const (
-	observerUrl = "https://wallet-front.qa-wallet.k8s-dev.insolar.io"
+	observerUrl = "https://wallet-api.qa-wallet.k8s-dev.insolar.io"
 )
 
 var observerObserverApi = GetObserverClient().ObserverApi
@@ -90,7 +90,8 @@ func TransactionList(t *testing.T, reference string) []insolar_observer_api.Inli
 	apilogger.Println("reference = " + reference)
 	response, http, err := observerObserverApi.TransactionList(nil, reference)
 	apilogger.LogApiResponse(http, response)
+	//apilogger.Println(  "Err="+err.Error())
 	require.Nil(t, err)
-	CheckResponseHasNoError(t, response)
+	//CheckResponseHasNoError(t, response) //todo not allowed, because array in response
 	return response
 }

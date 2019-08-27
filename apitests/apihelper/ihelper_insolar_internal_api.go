@@ -102,8 +102,8 @@ func AddMigrationAddresses(t *testing.T, addresses []string) insolar_internal_ap
 	d, s, m := Sign(body, ms.PrivateKey)
 	apilogger.LogApiRequest(body.Params.CallSite, body, m)
 	response, http, err := internalMigrationApi.AddMigrationAddresses(nil, d, s, body)
-	require.Nil(t, err)
 	apilogger.LogApiResponse(http, response)
+	require.Nil(t, err)
 	CheckResponseHasNoError(t, response)
 	apilogger.Printf("response id: %d", response.Id)
 	return response
@@ -128,8 +128,8 @@ func MigrationDeposit(t *testing.T) insolar_internal_api.DepositMigrationRespons
 	}
 	apilogger.LogApiRequest(body.Params.CallSite, body, nil)
 	response, http, err := internalMigrationApi.DepositMigration(nil, "", "", body) //migrationDaemonMember
-	require.Nil(t, err)
 	apilogger.LogApiResponse(http, response)
+	require.Nil(t, err)
 	require.NotEmpty(t, response.Result.CallResult.MemberReference)
 	return response
 }
@@ -159,8 +159,8 @@ func GetBalance(t *testing.T, member MemberObject) insolar_internal_api.MemberGe
 	d, s, m := Sign(body, member.Signature.PrivateKey)
 	apilogger.LogApiRequest(body.Params.CallSite, body, m)
 	response, http, err := internalMemberApi.GetBalance(nil, d, s, body)
-	require.Nil(t, err)
 	apilogger.LogApiResponse(http, response)
+	require.Nil(t, err)
 	require.NotEmpty(t, response.Result.CallResult.Balance)
 	return response
 }
@@ -184,9 +184,9 @@ func MigrationDeactivateDaemon(t *testing.T, migrationDaemonReference string) in
 	// d, s, m := Sign(body, admin.PrivateKey)
 	apilogger.LogApiRequest(body.Params.CallSite, body, nil)
 	response, http, err := internalMigrationApi.MigrationDeactivateDaemon(nil, "", "", body)
+	apilogger.LogApiResponse(http, response)
 	require.Nil(t, err)
 	CheckResponseHasNoError(t, response)
-	apilogger.LogApiResponse(http, response)
 	apilogger.Printf("response id: %d", response.Id)
 	return response
 }
@@ -210,9 +210,9 @@ func MigrationActivateDaemon(t *testing.T, migrationDaemonReference string) inso
 	// d, s, m := Sign(body, admin.PrivateKey)
 	apilogger.LogApiRequest(body.Params.CallSite, body, nil)
 	response, http, err := internalMigrationApi.MigrationChangeDaemon(nil, "", "", body)
+	apilogger.LogApiResponse(http, response)
 	require.Nil(t, err)
 	CheckResponseHasNoError(t, response)
-	apilogger.LogApiResponse(http, response)
 	apilogger.Printf("response id: %d", response.Id)
 	return response
 }

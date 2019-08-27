@@ -18,9 +18,8 @@
 package smoketests
 
 import (
-	"testing"
-
 	"github.com/insolar/insolar/apitests"
+	"testing"
 )
 
 func TestMain(m *testing.M) {

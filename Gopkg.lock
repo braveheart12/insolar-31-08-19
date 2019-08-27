@@ -288,7 +288,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:b7acd202bd075b40ba983f7b481258a622ab9a736399c05c5837830f6356937d"
+  digest = "1:b1c847919d78cde89a933f6da7927647b61d38b9fcfa302fbe67975d5cef73e5"
   name = "github.com/insolar/go-actors"
   packages = [
     "actor",
@@ -297,7 +297,7 @@
     "actor/system",
   ]
   pruneopts = "UT"
-  revision = "2fcc7bfc8ff98e6900dacde00aadb2a77d547a9e"
+  revision = "edeb5572d29cc6159f4c51e64339d2a901cd88b0"
 
 [[projects]]
   branch = "v1"
@@ -624,10 +624,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:045bd571ba5f149af316dcd42e7a33de6643b40973c8cc59c8184d5a26dea186"
+  digest = "1:83f57578ecc51416b32bdf95f86ea908dfb16c48dfa042e299885f6fa449b397"
   name = "golang.org/x/net"
   packages = [
     "context",
+    "context/ctxhttp",
     "http/httpguts",
     "http2",
     "http2/h2c",
@@ -638,6 +639,17 @@
   ]
   pruneopts = "UT"
   revision = "fae4c4e3ad76c295c3d6d259f898136b4bf833a8"
+
+[[projects]]
+  branch = "master"
+  digest = "1:8d1c112fb1679fa097e9a9255a786ee47383fa2549a3da71bcb1334a693ebcfe"
+  name = "golang.org/x/oauth2"
+  packages = [
+    ".",
+    "internal",
+  ]
+  pruneopts = "UT"
+  revision = "0f29369cfe4552d0e4bcddc57cc75f4d7e672a33"
 
 [[projects]]
   branch = "master"
@@ -688,6 +700,22 @@
   packages = ["support/bundler"]
   pruneopts = "UT"
   revision = "0a71a4356c3f4bcbdd16294c78ca2a31fda36cca"
+
+[[projects]]
+  digest = "1:6eb6e3b6d9fffb62958cf7f7d88dbbe1dd6839436b0802e194c590667a40412a"
+  name = "google.golang.org/appengine"
+  packages = [
+    "internal",
+    "internal/base",
+    "internal/datastore",
+    "internal/log",
+    "internal/remote_api",
+    "internal/urlfetch",
+    "urlfetch",
+  ]
+  pruneopts = "UT"
+  revision = "b2f4a3cf3c67576a2ee09e1fe62656a5086ce880"
+  version = "v1.6.1"
 
 [[projects]]
   branch = "master"
@@ -809,6 +837,7 @@
     "golang.org/x/net/context",
     "golang.org/x/net/http2",
     "golang.org/x/net/http2/h2c",
+    "golang.org/x/oauth2",
     "google.golang.org/genproto/googleapis/api/annotations",
     "google.golang.org/grpc",
     "google.golang.org/grpc/codes",

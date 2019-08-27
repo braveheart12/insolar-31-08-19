@@ -18,7 +18,9 @@
 package smoketests
 
 import (
+	"github.com/insolar/insolar/apitests/apihelper/apilogger"
 	"testing"
+	"time"
 
 	"github.com/insolar/insolar/apitests/apihelper"
 	"github.com/stretchr/testify/require"
@@ -33,11 +35,15 @@ func TestBalance(t *testing.T) {
 	member := apihelper.CreateMember(t)
 	require.NotEmpty(t, member.MemberReference, "MemberReference")
 
-	member.GetMember(t)
+	time.Sleep(5000)
+	get := apihelper.Member(t, member.MemberReference)
+	require.Empty(t, get.Error)
+	require.NotEmpty(t, get.Balance)
+	require.NotEmpty(t, get.MigrationAddress)
 
-	response := apihelper.Balance(t, member.MemberReference)
-	require.Empty(t, response.Error)
-	require.NotEmpty(t, response.Balance)
+	balance := apihelper.Balance(t, member.MemberReference)
+	require.Empty(t, balance.Error)
+	require.NotEmpty(t, balance.Balance)
 }
 
 func TestMember(t *testing.T) {
@@ -47,11 +53,19 @@ func TestMember(t *testing.T) {
 	require.Empty(t, response.Error)
 	require.NotEmpty(t, response.Balance)
 	require.NotEmpty(t, response.MigrationAddress)
-	require.NotEmpty(t, response.Deposits)
+	//require.NotEmpty(t, response.Deposits)
 }
 
 func TestTransaction(t *testing.T) {
-	response := apihelper.Transaction(t, "")
+	member1 := apihelper.CreateMember(t)
+	member2 := apihelper.CreateMember(t)
+	transfer := member1.Transfer(t, member2.MemberReference, "1")
+	apihelper.CheckResponseHasNoError(t, transfer)
+	apilogger.Println("Transfer OK. Fee: " + transfer.Result.CallResult.Fee)
+	require.NotEmpty(t, transfer.Result.CallResult.Fee, "Fee")
+
+	response := apihelper.Transaction(t, transfer.Result.RequestReference)
+
 	require.NotEmpty(t, response.Amount)
 	require.NotEmpty(t, response.Fee)
 	require.NotEmpty(t, response.FromMemberReference)
@@ -59,6 +73,13 @@ func TestTransaction(t *testing.T) {
 }
 
 func TestTransactionList(t *testing.T) {
-	response := apihelper.TransactionList(t, "")
-	require.NotEmpty(t, response)
+	member1 := apihelper.CreateMember(t)
+	member2 := apihelper.CreateMember(t)
+	transfer := member1.Transfer(t, member2.MemberReference, "1")
+	apihelper.CheckResponseHasNoError(t, transfer)
+	apilogger.Println("Transfer OK. Fee: " + transfer.Result.CallResult.Fee)
+	require.NotEmpty(t, transfer.Result.CallResult.Fee, "Fee")
+
+	transactions := apihelper.TransactionList(t, member1.MemberReference)
+	require.NotEmpty(t, transactions)
 }

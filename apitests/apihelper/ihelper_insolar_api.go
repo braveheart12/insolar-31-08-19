@@ -27,7 +27,8 @@ import (
 var id int32 = 0
 
 const (
-	url            = "http://localhost:19102"
+	//url            = "http://localhost:19102"
+	url            = observerUrl
 	JSONRPCVersion = "2.0"
 	ContractCall   = "contract.call"
 	// information_api
@@ -70,8 +71,8 @@ func GetSeed(t *testing.T) string {
 func GetSeedRequest(t *testing.T, r insolar_api.NodeGetSeedRequest) string {
 	apilogger.LogApiRequest(r.Method, r, nil)
 	response, http, err := informationApi.GetSeed(nil, r)
-	require.Nil(t, err)
 	apilogger.LogApiResponse(http, response)
+	require.Nil(t, err)
 	CheckResponseHasNoError(t, response)
 	return response.Result.Seed
 }
