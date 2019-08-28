@@ -63,14 +63,14 @@ func GetStatus(t *testing.T) insolar_internal_api.NodeGetStatusResponse200Result
 	}
 	apilogger.LogApiRequest(body.Method, body, nil)
 	response, http, err := internalInformationApi.GetStatus(nil, body)
-	require.Nil(t, err)
 	apilogger.LogApiResponse(http, response)
+	require.Nil(t, err)
 	apihelper.CheckResponseHasNoError(t, response)
 
 	return response.Result
 }
 
-func GetInfo(t *testing.T) insolar_internal_api.NetworkGetInfoResponse200Result {
+func GetInfo(t *testing.T) insolar_internal_api.NetworkGetInfoResponse200 {
 	body := insolar_internal_api.NetworkGetInfoRequest{
 		Jsonrpc: JSONRPCVersion,
 		Id:      apihelper.GetRequestId(),
@@ -78,12 +78,11 @@ func GetInfo(t *testing.T) insolar_internal_api.NetworkGetInfoResponse200Result 
 		Params:  nil,
 	}
 	apilogger.LogApiRequest(body.Method, body, nil)
-	response, http, err := internalInformationApi.GetInfo(nil, body)
-	require.Nil(t, err)
+	response, http, _ := internalInformationApi.GetInfo(nil, body)
 	apilogger.LogApiResponse(http, response)
 	apihelper.CheckResponseHasNoError(t, response)
 
-	return response.Result
+	return response
 }
 
 func AddMigrationAddresses(t *testing.T, addresses []string) insolar_internal_api.MigrationDeactivateDaemonResponse200 {
