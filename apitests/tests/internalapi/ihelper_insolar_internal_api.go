@@ -16,7 +16,6 @@
 package internalapi
 
 import (
-	//"github.com/insolar/insolar/apitests/apiclient/insolar_api"
 	"github.com/insolar/insolar/apitests/apihelper"
 	"github.com/insolar/insolar/apitests/tests/insolarapi"
 	"testing"

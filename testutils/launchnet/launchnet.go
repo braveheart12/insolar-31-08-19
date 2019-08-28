@@ -61,7 +61,7 @@ var stderr io.ReadCloser
 // Returns exit code as a result from calling callback function.
 func Run(cb func() int) int {
 	err := setup()
-	//defer teardown()
+	defer teardown()
 	if err != nil {
 		fmt.Println("error while setup, skip tests: ", err)
 		return 1
@@ -76,22 +76,22 @@ func Run(cb func() int) int {
 		teardown()
 	}()
 
-	//pulseWatcher, config, err := pulseWatcherPath()
-	//if err != nil {
-	//	fmt.Println("PulseWatcher not found: ", err)
-	//	return 1
-	//}
+	pulseWatcher, config, err := pulseWatcherPath()
+	if err != nil {
+		fmt.Println("PulseWatcher not found: ", err)
+		return 1
+	}
 
 	code := cb()
 
-	//if code != 0 {
-	//	out, err := exec.Command(pulseWatcher, "-c", config, "-s").CombinedOutput()
-	//	if err != nil {
-	//		fmt.Println("PulseWatcher execution error: ", err)
-	//		return 1
-	//	}
-	//	fmt.Println(string(out))
-	//}
+	if code != 0 {
+		out, err := exec.Command(pulseWatcher, "-c", config, "-s").CombinedOutput()
+		if err != nil {
+			fmt.Println("PulseWatcher execution error: ", err)
+			return 1
+		}
+		fmt.Println(string(out))
+	}
 	return code
 }
 
@@ -380,12 +380,12 @@ func waitForLaunch() error {
 }
 
 func setup() error {
-	//err = startNet()
-	//if err != nil {
-	// return errors.Wrap(err, "[ setup ] could't startNet")
-	//}
+	err := startNet()
+	if err != nil {
+		return errors.Wrap(err, "[ setup ] could't startNet")
+	}
 
-	err := loadAllMembersKeys()
+	err = loadAllMembersKeys()
 	if err != nil {
 		return errors.Wrap(err, "[ setup ] could't load keys: ")
 	}
