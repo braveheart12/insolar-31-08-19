@@ -50,12 +50,11 @@ func TestObserverGetToken(t *testing.T) {
 func TestMemberGetBalance(t *testing.T) {
 	member := insolarapi.CreateMember(t)
 	response := internalapi.GetBalance(t, member)
-	require.NotEmpty(t, response.Result.CallResult.Deposits)
+	//require.NotEmpty(t, response.Result.CallResult.Deposits)
 	require.NotEmpty(t, response.Result.CallResult.Balance)
+	require.NotEmpty(t, response.Result.RequestReference)
+	require.NotEmpty(t, response.Result.TraceID)
 }
-
-/* "code": 217,
-   "message": "[ makeCall ] Error in called method: unknown method: 'member.getBalance'"*/
 
 func TestMigrationDeactivateDaemon(t *testing.T) {
 	response := internalapi.MigrationDeactivateDaemon(t, "")
@@ -88,4 +87,8 @@ func TestGetInfo(t *testing.T) {
 	//require.NotEmpty(t, response.RootMember)
 	//require.NotEmpty(t, response.NodeDomain)
 	//require.NotEmpty(t, response.TraceID)
+}
+func TestGetSeedInternal(t *testing.T) {
+	response := internalapi.GetSeedInternal(t)
+	require.NotEmpty(t, response)
 }
