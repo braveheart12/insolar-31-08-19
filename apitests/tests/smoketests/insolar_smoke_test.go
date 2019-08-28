@@ -19,6 +19,8 @@ package smoketests
 
 import (
 	"encoding/json"
+	"github.com/insolar/insolar/apitests/tests/insolarapi"
+	"github.com/insolar/insolar/apitests/tests/internalapi"
 	"io/ioutil"
 	"path/filepath"
 	"testing"
@@ -31,20 +33,20 @@ import (
 // Information api
 
 func TestGetSeed(t *testing.T) {
-	seed := apihelper.GetSeed(t)
+	seed := insolarapi.GetSeed(t)
 	require.NotEmpty(t, seed)
 }
 
 // Member api
 
 func TestCreateMember(t *testing.T) {
-	member := apihelper.CreateMember(t)
+	member := insolarapi.CreateMember(t)
 	require.NotEmpty(t, member.MemberReference, "MemberReference")
 }
 
 func TestMemberTransfer(t *testing.T) {
-	member1 := apihelper.CreateMember(t)
-	member2 := apihelper.CreateMember(t)
+	member1 := insolarapi.CreateMember(t)
+	member2 := insolarapi.CreateMember(t)
 	transfer := member1.Transfer(t, member2.MemberReference, "1")
 	apihelper.CheckResponseHasNoError(t, transfer)
 	apilogger.Println("Transfer OK. Fee: " + transfer.Result.CallResult.Fee)
@@ -52,7 +54,7 @@ func TestMemberTransfer(t *testing.T) {
 }
 
 func TestGetMember(t *testing.T) {
-	member1 := apihelper.CreateMember(t)
+	member1 := insolarapi.CreateMember(t)
 	resp := member1.GetMember(t)
 	apihelper.CheckResponseHasNoError(t, resp)
 	require.Equal(t, member1.MemberReference, resp.Result.CallResult.Reference, "Reference")
@@ -73,15 +75,15 @@ func TestMemberMigrationCreate(t *testing.T) {
 	list := addressesList{}
 	json.Unmarshal(b, &list)
 
-	response := apihelper.AddMigrationAddresses(t, list.Addresses)
+	response := internalapi.AddMigrationAddresses(t, list.Addresses)
 	require.NotNil(t, response)
-	member := apihelper.MemberMigrationCreate(t)
+	member := insolarapi.MemberMigrationCreate(t)
 	require.NotEmpty(t, member)
 	require.NotEmpty(t, member.MemberResponseResult)
 }
 
 func TestDepositTransfer(t *testing.T) {
-	member := apihelper.MemberMigrationCreate(t)
+	member := insolarapi.MemberMigrationCreate(t)
 	response := member.DepositTransfer(t)
 	require.NotEmpty(t, response.Result.CallResult)
 }

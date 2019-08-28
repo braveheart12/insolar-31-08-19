@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 ////////////////////////////////////////////////////////////////////////////////
-package internalapitests
+package internalapi
 
 //
 //import (
@@ -47,7 +47,7 @@ package internalapitests
 //	}
 //	for _, tc := range data {
 //		r := insolar_api.NetworkGetInfoRequest200{
-//			Jsonrpc: apihelper.JSONRPCVersion,
+//			Jsonrpc: JSONRPCVersion,
 //			Id:      apihelper.GetRequestId(),
 //			Method:  tc.Input,
 //		}
@@ -81,7 +81,7 @@ package internalapitests
 //
 //	for _, v := range data {
 //		r := insolar_api.NetworkGetInfoRequest{
-//			Jsonrpc: apihelper.JSONRPCVersion,
+//			Jsonrpc: JSONRPCVersion,
 //			Id:      v,
 //			Method:  apihelper.GetInfoMethod,
 //		}
@@ -91,7 +91,7 @@ package internalapitests
 //
 //func TestGetInfoWithTwoRequestId(t *testing.T) {
 //	r := insolar_api.NetworkGetInfoRequest{
-//		Jsonrpc: apihelper.JSONRPCVersion,
+//		Jsonrpc: JSONRPCVersion,
 //		Id:      1,
 //		Method:  apihelper.GetInfoMethod,
 //	}

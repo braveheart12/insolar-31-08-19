@@ -1,4 +1,4 @@
-//
+///
 // Copyright 2019 Insolar Technologies GmbH
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,10 +12,12 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-package apihelper
+///
+package internalapi
 
 import (
+	"github.com/insolar/insolar/apitests/apihelper"
+	"github.com/insolar/insolar/apitests/tests/insolarapi"
 	"testing"
 
 	"github.com/insolar/insolar/apitests/apiclient/insolar_internal_api"
@@ -24,6 +26,9 @@ import (
 )
 
 const (
+	JSONRPCVersion = "2.0"
+	url            = "http://localhost:19102"
+	ContractCall   = "contract.call"
 	// information_api
 	GetStatusMethod = "node.getStatus"
 	// migration_api
@@ -52,7 +57,7 @@ func GetInternalClient() *insolar_internal_api.APIClient {
 func GetStatus(t *testing.T) insolar_internal_api.NodeGetStatusResponse200Result {
 	body := insolar_internal_api.NodeGetStatusRequest{
 		Jsonrpc: JSONRPCVersion,
-		Id:      GetRequestId(),
+		Id:      apihelper.GetRequestId(),
 		Method:  GetStatusMethod,
 		Params:  nil,
 	}
@@ -60,7 +65,7 @@ func GetStatus(t *testing.T) insolar_internal_api.NodeGetStatusResponse200Result
 	response, http, err := internalInformationApi.GetStatus(nil, body)
 	require.Nil(t, err)
 	apilogger.LogApiResponse(http, response)
-	CheckResponseHasNoError(t, response)
+	apihelper.CheckResponseHasNoError(t, response)
 
 	return response.Result
 }
@@ -68,7 +73,7 @@ func GetStatus(t *testing.T) insolar_internal_api.NodeGetStatusResponse200Result
 func GetInfo(t *testing.T) insolar_internal_api.NetworkGetInfoResponse200Result {
 	body := insolar_internal_api.NetworkGetInfoRequest{
 		Jsonrpc: JSONRPCVersion,
-		Id:      GetRequestId(),
+		Id:      apihelper.GetRequestId(),
 		Method:  NetworkGetInfo,
 		Params:  nil,
 	}
@@ -76,21 +81,21 @@ func GetInfo(t *testing.T) insolar_internal_api.NetworkGetInfoResponse200Result 
 	response, http, err := internalInformationApi.GetInfo(nil, body)
 	require.Nil(t, err)
 	apilogger.LogApiResponse(http, response)
-	CheckResponseHasNoError(t, response)
+	apihelper.CheckResponseHasNoError(t, response)
 
 	return response.Result
 }
 
 func AddMigrationAddresses(t *testing.T, addresses []string) insolar_internal_api.MigrationDeactivateDaemonResponse200 {
-	ms, _ := NewMemberSignature()
-	adminPub, _ := LoadAdminMemberKeys() //todo getinfo
+	ms, _ := apihelper.NewMemberSignature()
+	adminPub, _ := apihelper.LoadAdminMemberKeys() //todo getinfo
 
 	body := insolar_internal_api.MigrationAddAddressesRequest{
 		Jsonrpc: JSONRPCVersion,
-		Id:      GetRequestId(),
+		Id:      apihelper.GetRequestId(),
 		Method:  ContractCall,
 		Params: insolar_internal_api.MigrationAddAddressesRequestParams{
-			Seed:     GetSeed(t),
+			Seed:     insolarapi.GetSeed(t),
 			CallSite: MigrationAddAddresses,
 			CallParams: insolar_internal_api.MigrationAddAddressesRequestParamsCallParams{
 				MigrationAddresses: addresses,
@@ -99,12 +104,12 @@ func AddMigrationAddresses(t *testing.T, addresses []string) insolar_internal_ap
 			Reference: "",
 		},
 	}
-	d, s, m := Sign(body, ms.PrivateKey)
+	d, s, m := apihelper.Sign(body, ms.PrivateKey)
 	apilogger.LogApiRequest(body.Params.CallSite, body, m)
 	response, http, err := internalMigrationApi.AddMigrationAddresses(nil, d, s, body)
 	apilogger.LogApiResponse(http, response)
 	require.Nil(t, err)
-	CheckResponseHasNoError(t, response)
+	apihelper.CheckResponseHasNoError(t, response)
 	apilogger.Printf("response id: %d", response.Id)
 	return response
 }
@@ -112,10 +117,10 @@ func AddMigrationAddresses(t *testing.T, addresses []string) insolar_internal_ap
 func MigrationDeposit(t *testing.T) insolar_internal_api.DepositMigrationResponse200 {
 	body := insolar_internal_api.DepositMigrationRequest{
 		Jsonrpc: JSONRPCVersion,
-		Id:      GetRequestId(),
+		Id:      apihelper.GetRequestId(),
 		Method:  ContractCall,
 		Params: insolar_internal_api.DepositMigrationRequestParams{
-			Seed:     GetSeed(t),
+			Seed:     insolarapi.GetSeed(t),
 			CallSite: DepositMigration,
 			CallParams: insolar_internal_api.DepositMigrationRequestParamsCallParams{
 				Amount:           "1000",
@@ -141,13 +146,13 @@ func ObserverToken(t *testing.T) insolar_internal_api.TokenResponse200 {
 	return response
 }
 
-func GetBalance(t *testing.T, member MemberObject) insolar_internal_api.MemberGetBalanceResponse200 {
+func GetBalance(t *testing.T, member insolarapi.MemberObject) insolar_internal_api.MemberGetBalanceResponse200 {
 	body := insolar_internal_api.MemberGetBalanceRequest{
 		Jsonrpc: JSONRPCVersion,
-		Id:      GetRequestId(),
+		Id:      apihelper.GetRequestId(),
 		Method:  ContractCall,
 		Params: insolar_internal_api.MemberGetBalanceRequestParams{
-			Seed:     GetSeed(t),
+			Seed:     insolarapi.GetSeed(t),
 			CallSite: MemberGetBalance,
 			CallParams: insolar_internal_api.MemberGetBalanceRequestParamsCallParams{
 				Reference: member.MemberReference,
@@ -156,7 +161,7 @@ func GetBalance(t *testing.T, member MemberObject) insolar_internal_api.MemberGe
 			Reference: member.MemberReference,
 		},
 	}
-	d, s, m := Sign(body, member.Signature.PrivateKey)
+	d, s, m := apihelper.Sign(body, member.Signature.PrivateKey)
 	apilogger.LogApiRequest(body.Params.CallSite, body, m)
 	response, http, err := internalMemberApi.GetBalance(nil, d, s, body)
 	apilogger.LogApiResponse(http, response)
@@ -169,10 +174,10 @@ func MigrationDeactivateDaemon(t *testing.T, migrationDaemonReference string) in
 
 	body := insolar_internal_api.MigrationDeactivateDaemonRequest{
 		Jsonrpc: JSONRPCVersion,
-		Id:      GetRequestId(),
+		Id:      apihelper.GetRequestId(),
 		Method:  ContractCall,
 		Params: insolar_internal_api.MigrationDeactivateDaemonRequestParams{
-			Seed:     GetSeed(t),
+			Seed:     insolarapi.GetSeed(t),
 			CallSite: DeactivateDaemon,
 			CallParams: insolar_internal_api.MigrationDeactivateDaemonRequestParamsCallParams{
 				Reference: migrationDaemonReference, // migrationdaemon
@@ -186,7 +191,7 @@ func MigrationDeactivateDaemon(t *testing.T, migrationDaemonReference string) in
 	response, http, err := internalMigrationApi.MigrationDeactivateDaemon(nil, "", "", body)
 	apilogger.LogApiResponse(http, response)
 	require.Nil(t, err)
-	CheckResponseHasNoError(t, response)
+	apihelper.CheckResponseHasNoError(t, response)
 	apilogger.Printf("response id: %d", response.Id)
 	return response
 }
@@ -195,10 +200,10 @@ func MigrationActivateDaemon(t *testing.T, migrationDaemonReference string) inso
 
 	body := insolar_internal_api.MigrationActivateDaemonRequest{
 		Jsonrpc: JSONRPCVersion,
-		Id:      GetRequestId(),
+		Id:      apihelper.GetRequestId(),
 		Method:  ContractCall,
 		Params: insolar_internal_api.MigrationActivateDaemonRequestParams{
-			Seed:     GetSeed(t),
+			Seed:     insolarapi.GetSeed(t),
 			CallSite: ActivateDaemon,
 			CallParams: insolar_internal_api.MigrationActivateDaemonRequestParamsCallParams{
 				Reference: migrationDaemonReference, // migrationdaemon
@@ -212,7 +217,7 @@ func MigrationActivateDaemon(t *testing.T, migrationDaemonReference string) inso
 	response, http, err := internalMigrationApi.MigrationChangeDaemon(nil, "", "", body)
 	apilogger.LogApiResponse(http, response)
 	require.Nil(t, err)
-	CheckResponseHasNoError(t, response)
+	apihelper.CheckResponseHasNoError(t, response)
 	apilogger.Printf("response id: %d", response.Id)
 	return response
 }

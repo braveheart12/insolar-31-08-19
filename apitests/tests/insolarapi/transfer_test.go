@@ -14,18 +14,17 @@
 // limitations under the License.
 ////////////////////////////////////////////////////////////////////////////////
 
-package publicapitests
+package insolarapi
 
 import (
-	"github.com/insolar/insolar/apitests/apihelper"
 	"github.com/insolar/insolar/apitests/tests"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
 
 func TestMemberMinusTransfer(t *testing.T) {
-	member1 := apihelper.CreateMember(t)
-	member2 := apihelper.CreateMember(t)
+	member1 := CreateMember(t)
+	member2 := CreateMember(t)
 	input := []string{"-1", //INS-2183
 		"+0",
 		"0", //INS-2184
@@ -39,7 +38,7 @@ func TestMemberMinusTransfer(t *testing.T) {
 }
 
 func TestMemberTransferToBadMember(t *testing.T) {
-	member1 := apihelper.CreateMember(t)
+	member1 := CreateMember(t)
 	transfer := member1.Transfer(t, "5gFY3nZ5uDPCCU2MwQbFSQ17XA2b1eUo9xp3p8AkdAB.11111111111111111111111111111111", "100")
 	error := tests.TestError{-32000, "member not found"} //https://insolar.atlassian.net/browse/INS-3309
 	require.Equal(t, error.Code, transfer.Error.Code)

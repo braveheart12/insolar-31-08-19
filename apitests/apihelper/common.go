@@ -39,6 +39,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+var id int32 = 0
+
 type errorStruct struct {
 	Error struct {
 		Data struct {
@@ -48,6 +50,11 @@ type errorStruct struct {
 		Code    int    `json:"code"`
 		Message string `json:"message"`
 	} `json:"error"`
+}
+
+func GetRequestId() int32 {
+	id++
+	return id
 }
 
 func NewMemberSignature() (MemberSignature, error) {

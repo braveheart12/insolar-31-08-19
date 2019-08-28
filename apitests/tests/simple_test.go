@@ -35,7 +35,7 @@ func TestCreateTransferGetBalance(t *testing.T) {
 	Logger.Println("finished")
 }
 
-func transfer(memberFrom apiclientdeprecated.MemberObject, memberTo apiclientdeprecated.MemberObject) {
+func transfer(memberFrom apiclientdeprecated. apihelper.MemberObject, memberTo apiclientdeprecated. apihelper.MemberObject) {
 	defer Wg.Done()
 	result := memberFrom.TransferMoney(memberTo, "100")
 	Logger.Printf("Transfer from: %v to %v",
