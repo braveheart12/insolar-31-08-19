@@ -19,24 +19,25 @@ package smoketests
 
 import (
 	"github.com/insolar/insolar/apitests/apiclient/insolar_observer_api"
+	"github.com/insolar/insolar/apitests/apihelper"
 	"github.com/insolar/insolar/apitests/apihelper/apilogger"
+	"github.com/insolar/insolar/apitests/tests/insolarapi"
+	"github.com/insolar/insolar/apitests/tests/observerapi"
+	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
-
-	"github.com/insolar/insolar/apitests/apihelper"
-	"github.com/stretchr/testify/require"
 )
 
 func TestNotification(t *testing.T) {
-	response := apihelper.Notification(t) //todo не понятно как работает
+	response := observerapi.Notification(t) //todo не понятно как работает
 	require.NotEmpty(t, response.Notification)
 }
 
 func TestObserverSmoke(t *testing.T) {
 	//precondition
 	amount := "1"
-	member1 := apihelper.CreateMember(t)
-	member2 := apihelper.CreateMember(t)
+	member1 := insolarapi.CreateMember(t)
+	member2 := insolarapi.CreateMember(t)
 	transfer := member1.Transfer(t, member2.MemberReference, amount)
 	apihelper.CheckResponseHasNoError(t, transfer)
 	fee := transfer.Result.CallResult.Fee
@@ -55,7 +56,7 @@ func TestObserverSmoke(t *testing.T) {
 	getBalance(t, member2, "10000000001")
 
 	//getTransaction
-	response := apihelper.Transaction(t, transfer.Result.RequestReference)
+	response := observerapi.Transaction(t, transfer.Result.RequestReference)
 
 	require.Equal(t, amount, response.Amount)
 	require.Equal(t, fee, response.Fee)
@@ -72,8 +73,8 @@ func TestObserverSmoke(t *testing.T) {
 	assertTransactionsContains(transactions2, response, t)
 }
 
-func getTransactionList(t *testing.T, member apihelper.MemberObject) []insolar_observer_api.InlineResponse200 {
-	transactions := apihelper.TransactionList(t, member.MemberReference+"?direction=all&limit=10")
+func getTransactionList(t *testing.T, member insolarapi.MemberObject) []insolar_observer_api.InlineResponse200 {
+	transactions := observerapi.TransactionList(t, member.MemberReference+"?direction=all&limit=10")
 	require.NotEmpty(t, transactions)
 	return transactions
 }
@@ -92,14 +93,14 @@ func assertTransactionsContains(transactions []insolar_observer_api.InlineRespon
 	}
 }
 
-func getBalance(t *testing.T, member apihelper.MemberObject, expBalance string) {
-	balance := apihelper.Balance(t, member.MemberReference)
+func getBalance(t *testing.T, member insolarapi.MemberObject, expBalance string) {
+	balance := observerapi.Balance(t, member.MemberReference)
 	require.Empty(t, balance.Error)
 	require.Equal(t, expBalance, balance.Balance)
 }
 
-func getMember(t *testing.T, member apihelper.MemberObject) {
-	get := apihelper.Member(t, member.MemberReference)
+func getMember(t *testing.T, member insolarapi.MemberObject) {
+	get := observerapi.Member(t, member.MemberReference)
 	require.Empty(t, get.Error)
 	require.NotEmpty(t, get.Balance)
 	//require.NotEmpty(t, get.MigrationAddress)
