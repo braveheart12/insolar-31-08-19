@@ -1,4 +1,4 @@
-//
+///
 // Copyright 2019 Insolar Technologies GmbH
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,10 +12,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-package apihelper
+///
+package observerapi
 
 import (
+	"github.com/insolar/insolar/apitests/apihelper"
 	"testing"
 
 	"github.com/insolar/insolar/apitests/apiclient/insolar_observer_api"
@@ -24,7 +25,8 @@ import (
 )
 
 const (
-	observerUrl = "https://wallet-api.qa-wallet.k8s-dev.insolar.io"
+	observerUrl    = "https://wallet-api.qa-wallet.k8s-dev.insolar.io"
+	JSONRPCVersion = "2.0"
 )
 
 var observerObserverApi = GetObserverClient().ObserverApi
@@ -42,7 +44,7 @@ func Notification(t *testing.T) insolar_observer_api.NotificationResponse200 {
 	response, http, err := observerInformationApi.Notification(nil)
 	apilogger.LogApiResponse(http, response)
 	require.Nil(t, err)
-	CheckResponseHasNoError(t, response)
+	apihelper.CheckResponseHasNoError(t, response)
 	return response
 }
 
@@ -52,7 +54,7 @@ func Balance(t *testing.T, reference string) insolar_observer_api.BalanceRespons
 	response, http, err := observerObserverApi.Balance(nil, reference)
 	apilogger.LogApiResponse(http, response)
 	require.Nil(t, err)
-	CheckResponseHasNoError(t, response)
+	apihelper.CheckResponseHasNoError(t, response)
 	return response
 }
 
@@ -62,7 +64,7 @@ func Fee(t *testing.T, amount string) insolar_observer_api.FeeResponse200 {
 	response, http, err := observerObserverApi.Fee(nil, amount)
 	apilogger.LogApiResponse(http, response)
 	require.Nil(t, err)
-	CheckResponseHasNoError(t, response)
+	apihelper.CheckResponseHasNoError(t, response)
 	return response
 }
 
@@ -72,7 +74,7 @@ func Member(t *testing.T, reference string) insolar_observer_api.MemberResponse2
 	response, http, err := observerObserverApi.Member(nil, reference)
 	apilogger.LogApiResponse(http, response)
 	require.Nil(t, err)
-	CheckResponseHasNoError(t, response)
+	apihelper.CheckResponseHasNoError(t, response)
 	return response
 }
 
@@ -82,7 +84,7 @@ func Transaction(t *testing.T, txId string) insolar_observer_api.TransactionResp
 	response, http, err := observerObserverApi.Transaction(nil, txId)
 	apilogger.LogApiResponse(http, response)
 	require.Nil(t, err)
-	CheckResponseHasNoError(t, response)
+	apihelper.CheckResponseHasNoError(t, response)
 	return response
 }
 func TransactionList(t *testing.T, reference string) []insolar_observer_api.InlineResponse200 {
@@ -92,6 +94,6 @@ func TransactionList(t *testing.T, reference string) []insolar_observer_api.Inli
 	apilogger.LogApiResponse(http, response)
 	//apilogger.Println(  "Err="+err.Error())
 	require.Nil(t, err)
-	//CheckResponseHasNoError(t, response) //todo not allowed, because array in response
+	//apihelper.CheckResponseHasNoError(t, response) //todo not allowed, because array in response
 	return response
 }

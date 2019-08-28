@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-package publicapitests
+package insolarapi
 
 import (
 	"testing"
@@ -46,12 +46,12 @@ func TestCreateMemberWithBadSeed(t *testing.T) {
 	for _, tc := range data {
 		ms, _ := apihelper.NewMemberSignature()
 		request := insolar_api.MemberCreateRequest{
-			Jsonrpc: apihelper.JSONRPCVersion,
+			Jsonrpc: JSONRPCVersion,
 			Id:      apihelper.GetRequestId(),
-			Method:  apihelper.ContractCall,
+			Method:  ContractCall,
 			Params: insolar_api.MemberCreateRequestParams{
 				Seed:      tc.Input,
-				CallSite:  apihelper.MemberCreateMethod,
+				CallSite:  MemberCreateMethod,
 				PublicKey: string(ms.PemPublicKey),
 			},
 		}
@@ -60,18 +60,18 @@ func TestCreateMemberWithBadSeed(t *testing.T) {
 }
 
 func TestCreateMemberWithOldSeed(t *testing.T) {
-	seed := apihelper.GetSeed(t)
+	seed := GetSeed(t)
 
 	time.Sleep(5 * time.Second)
 
 	ms, _ := apihelper.NewMemberSignature()
 	request := insolar_api.MemberCreateRequest{
-		Jsonrpc: apihelper.JSONRPCVersion,
+		Jsonrpc: JSONRPCVersion,
 		Id:      apihelper.GetRequestId(),
-		Method:  apihelper.ContractCall,
+		Method:  ContractCall,
 		Params: insolar_api.MemberCreateRequestParams{
 			Seed:      seed,
-			CallSite:  apihelper.MemberCreateMethod,
+			CallSite:  MemberCreateMethod,
 			PublicKey: string(ms.PemPublicKey),
 		},
 	}
@@ -81,12 +81,12 @@ func TestCreateMemberWithOldSeed(t *testing.T) {
 func TestCreateMemberWithEmptyPK(t *testing.T) {
 	ms, _ := apihelper.NewMemberSignature()
 	request := insolar_api.MemberCreateRequest{
-		Jsonrpc: apihelper.JSONRPCVersion,
+		Jsonrpc: JSONRPCVersion,
 		Id:      apihelper.GetRequestId(),
-		Method:  apihelper.ContractCall,
+		Method:  ContractCall,
 		Params: insolar_api.MemberCreateRequestParams{
-			Seed:      apihelper.GetSeed(t),
-			CallSite:  apihelper.MemberCreateMethod,
+			Seed:      GetSeed(t),
+			CallSite:  MemberCreateMethod,
 			PublicKey: "",
 		},
 	}
@@ -97,12 +97,12 @@ func TestCreateMemberWithOtherPK(t *testing.T) {
 	ms, _ := apihelper.NewMemberSignature()
 	ms2, _ := apihelper.NewMemberSignature()
 	request := insolar_api.MemberCreateRequest{
-		Jsonrpc: apihelper.JSONRPCVersion,
+		Jsonrpc: JSONRPCVersion,
 		Id:      apihelper.GetRequestId(),
-		Method:  apihelper.ContractCall,
+		Method:  ContractCall,
 		Params: insolar_api.MemberCreateRequestParams{
-			Seed:      apihelper.GetSeed(t),
-			CallSite:  apihelper.MemberCreateMethod,
+			Seed:      GetSeed(t),
+			CallSite:  MemberCreateMethod,
 			PublicKey: string(ms2.PemPublicKey),
 		},
 	}
@@ -118,8 +118,8 @@ func responseErrCreateMember(request insolar_api.MemberCreateRequest, ms apihelp
 
 func logCreateMember(request insolar_api.MemberCreateRequest, ms apihelper.MemberSignature, t *testing.T) insolar_api.MemberCreateResponse200 {
 	d, s, m := apihelper.Sign(request, ms.PrivateKey)
-	apilogger.LogApiRequest(apihelper.MemberCreateMethod, request, m)
-	response, http, err := apihelper.GetClient().MemberApi.MemberCreate(nil, d, s, request)
+	apilogger.LogApiRequest(MemberCreateMethod, request, m)
+	response, http, err := GetClient().MemberApi.MemberCreate(nil, d, s, request)
 	require.Nil(t, err)
 	apilogger.LogApiResponse(http, response)
 	return response

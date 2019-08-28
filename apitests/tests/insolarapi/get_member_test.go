@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-package publicapitests
+package insolarapi
 
 import (
 	"github.com/insolar/insolar/apitests/apiclient/insolar_api"
@@ -27,21 +27,21 @@ import (
 
 func TestGetNotExistMember(t *testing.T) {
 	ms, _ := apihelper.NewMemberSignature()
-	seed := apihelper.GetSeed(t)
+	seed := GetSeed(t)
 	request := insolar_api.MemberGetRequest{
-		Jsonrpc: apihelper.JSONRPCVersion,
+		Jsonrpc: JSONRPCVersion,
 		Id:      apihelper.GetRequestId(),
-		Method:  apihelper.ContractCall,
+		Method:  ContractCall,
 		Params: insolar_api.MemberGetRequestParams{
 			Seed:       seed,
-			CallSite:   apihelper.MemberGetMethod,
+			CallSite:   MemberGetMethod,
 			CallParams: nil,
 			PublicKey:  string(ms.PemPublicKey),
 		},
 	}
 	d, s, m := apihelper.Sign(request, ms.PrivateKey)
 	apilogger.LogApiRequest(request.Params.CallSite, request, m)
-	response, http, err := apihelper.GetClient().MemberApi.MemberGet(nil, d, s, request)
+	response, http, err := GetClient().MemberApi.MemberGet(nil, d, s, request)
 	apilogger.LogApiResponse(http, response)
 	require.Nil(t, err)
 	error := tests.TestError{-32000, "[ makeCall ] Error in called method: failed to get reference by public key: failed to get reference in shard: failed to find reference by key"}

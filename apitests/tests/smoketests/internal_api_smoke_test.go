@@ -18,10 +18,11 @@
 package smoketests
 
 import (
+	"github.com/insolar/insolar/apitests/tests/insolarapi"
 	"testing"
 
-	"github.com/insolar/insolar/apitests/apihelper"
-	uuid "github.com/satori/go.uuid"
+	"github.com/insolar/insolar/apitests/tests/internalapi"
+	"github.com/satori/go.uuid"
 	"github.com/stretchr/testify/require"
 )
 
@@ -30,25 +31,25 @@ func TestMigrationAddAddresses(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	response := apihelper.AddMigrationAddresses(t, []string{uuids.String()})
+	response := internalapi.AddMigrationAddresses(t, []string{uuids.String()})
 	require.NotEmpty(t, response.Result)
 	require.Empty(t, response.Error)
 }
 
 func TestMigrationDeposit(t *testing.T) {
-	response := apihelper.MigrationDeposit(t)
+	response := internalapi.MigrationDeposit(t)
 	require.NotEmpty(t, response.Result)
 	require.Empty(t, response.Error)
 }
 
 func TestObserverGetToken(t *testing.T) {
-	response := apihelper.ObserverToken(t) //not worked
+	response := internalapi.ObserverToken(t) //not worked
 	require.NotEmpty(t, response)
 }
 
 func TestMemberGetBalance(t *testing.T) {
-	member := apihelper.CreateMember(t)
-	response := apihelper.GetBalance(t, member)
+	member := insolarapi.CreateMember(t)
+	response := internalapi.GetBalance(t, member)
 	require.NotEmpty(t, response.Result.CallResult.Deposits)
 	require.NotEmpty(t, response.Result.CallResult.Balance)
 }
@@ -57,19 +58,19 @@ func TestMemberGetBalance(t *testing.T) {
    "message": "[ makeCall ] Error in called method: unknown method: 'member.getBalance'"*/
 
 func TestMigrationDeactivateDaemon(t *testing.T) {
-	response := apihelper.MigrationDeactivateDaemon(t, "")
+	response := internalapi.MigrationDeactivateDaemon(t, "")
 	require.NotEmpty(t, response.Result)
 	require.Empty(t, response.Error)
 }
 
 func TestMigrationActivateDaemon(t *testing.T) {
-	response := apihelper.MigrationActivateDaemon(t, "")
+	response := internalapi.MigrationActivateDaemon(t, "")
 	require.NotEmpty(t, response.Result)
 	require.Empty(t, response.Error)
 }
 
 func TestGetStatus(t *testing.T) {
-	response := apihelper.GetStatus(t)
+	response := internalapi.GetStatus(t)
 	require.Equal(t, "CompleteNetworkState", response.NetworkState)
 	require.NotEmpty(t, response.ActiveListSize)
 	require.NotEmpty(t, response.Entropy)
@@ -82,7 +83,7 @@ func TestGetStatus(t *testing.T) {
 }
 
 func TestGetInfo(t *testing.T) {
-	response := apihelper.GetInfo(t)
+	response := internalapi.GetInfo(t)
 	require.NotEmpty(t, response.RootDomain)
 	require.NotEmpty(t, response.RootMember)
 	require.NotEmpty(t, response.NodeDomain)

@@ -1,4 +1,4 @@
-//
+///
 // Copyright 2019 Insolar Technologies GmbH
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,23 +12,22 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-package apihelper
+///
+package insolarapi
 
 import (
 	"log"
 	"testing"
 
 	"github.com/insolar/insolar/apitests/apiclient/insolar_api"
+	"github.com/insolar/insolar/apitests/apihelper"
 	"github.com/insolar/insolar/apitests/apihelper/apilogger"
 	"github.com/stretchr/testify/require"
 )
 
-var id int32 = 0
-
 const (
 	//url            = "http://localhost:19102"
-	url            = observerUrl
+	url            = "https://wallet-api.qa-wallet.k8s-dev.insolar.io"
 	JSONRPCVersion = "2.0"
 	ContractCall   = "contract.call"
 	// information_api
@@ -47,6 +46,8 @@ var informationApi = GetClient().InformationApi
 var memberApi = GetClient().MemberApi
 var migrationApi = GetClient().MigrationApi
 
+type MemberObject apihelper.MemberObject
+
 func GetClient() *insolar_api.APIClient {
 	c := insolar_api.Configuration{
 		BasePath: url,
@@ -54,15 +55,10 @@ func GetClient() *insolar_api.APIClient {
 	return insolar_api.NewAPIClient(&c)
 }
 
-func GetRequestId() int32 {
-	id++
-	return id
-}
-
 func GetSeed(t *testing.T) string {
 	r := insolar_api.NodeGetSeedRequest{
 		Jsonrpc: JSONRPCVersion,
-		Id:      GetRequestId(),
+		Id:      apihelper.GetRequestId(),
 		Method:  GetSeedMethod,
 	}
 	return GetSeedRequest(t, r)
@@ -73,18 +69,18 @@ func GetSeedRequest(t *testing.T, r insolar_api.NodeGetSeedRequest) string {
 	response, http, err := informationApi.GetSeed(nil, r)
 	apilogger.LogApiResponse(http, response)
 	require.Nil(t, err)
-	CheckResponseHasNoError(t, response)
+	apihelper.CheckResponseHasNoError(t, response)
 	return response.Result.Seed
 }
 
 func CreateMember(t *testing.T) MemberObject {
 	var err error
-	ms, _ := NewMemberSignature()
+	ms, _ := apihelper.NewMemberSignature()
 	seed := GetSeed(t)
 
 	request := insolar_api.MemberCreateRequest{
 		Jsonrpc: JSONRPCVersion,
-		Id:      GetRequestId(),
+		Id:      apihelper.GetRequestId(),
 		Method:  ContractCall,
 		Params: insolar_api.MemberCreateRequestParams{
 			Seed:      seed,
@@ -92,12 +88,12 @@ func CreateMember(t *testing.T) MemberObject {
 			PublicKey: string(ms.PemPublicKey),
 		},
 	}
-	d, s, m := Sign(request, ms.PrivateKey)
+	d, s, m := apihelper.Sign(request, ms.PrivateKey)
 	apilogger.LogApiRequest(request.Params.CallSite, request, m)
 	response, http, err := memberApi.MemberCreate(nil, d, s, request)
 	require.Nil(t, err)
 	apilogger.LogApiResponse(http, response)
-	CheckResponseHasNoError(t, response)
+	apihelper.CheckResponseHasNoError(t, response)
 	apilogger.Println("Member created: " + response.Result.CallResult.Reference)
 	return MemberObject{
 		MemberReference:      response.Result.CallResult.Reference,
@@ -110,7 +106,7 @@ func (member *MemberObject) GetMember(t *testing.T) insolar_api.MemberGetRespons
 	seed := GetSeed(t)
 	request := insolar_api.MemberGetRequest{
 		Jsonrpc: JSONRPCVersion,
-		Id:      GetRequestId(),
+		Id:      apihelper.GetRequestId(),
 		Method:  ContractCall,
 		Params: insolar_api.MemberGetRequestParams{
 			Seed:       seed,
@@ -119,7 +115,7 @@ func (member *MemberObject) GetMember(t *testing.T) insolar_api.MemberGetRespons
 			PublicKey:  string(member.Signature.PemPublicKey),
 		},
 	}
-	d, s, m := Sign(request, member.Signature.PrivateKey)
+	d, s, m := apihelper.Sign(request, member.Signature.PrivateKey)
 	apilogger.LogApiRequest(request.Params.CallSite, request, m)
 	response, http, err := memberApi.MemberGet(nil, d, s, request)
 	apilogger.LogApiResponse(http, response)
@@ -131,7 +127,7 @@ func (member *MemberObject) Transfer(t *testing.T, toMemberRef string, amount st
 	seed := GetSeed(t)
 	request := insolar_api.MemberTransferRequest{
 		Jsonrpc: JSONRPCVersion,
-		Id:      GetRequestId(),
+		Id:      apihelper.GetRequestId(),
 		Method:  ContractCall,
 		Params: insolar_api.MemberTransferRequestParams{
 			Seed:     seed,
@@ -144,7 +140,7 @@ func (member *MemberObject) Transfer(t *testing.T, toMemberRef string, amount st
 			Reference: member.MemberResponseResult.Result.CallResult.Reference,
 		},
 	}
-	d, s, m := Sign(request, member.Signature.PrivateKey)
+	d, s, m := apihelper.Sign(request, member.Signature.PrivateKey)
 	apilogger.LogApiRequest(request.Params.CallSite, request, m)
 	response, http, err := memberApi.MemberTransfer(nil, d, s, request)
 	require.Nil(t, err)
@@ -154,12 +150,12 @@ func (member *MemberObject) Transfer(t *testing.T, toMemberRef string, amount st
 
 func MemberMigrationCreate(t *testing.T) MemberObject {
 	var err error
-	ms, _ := NewMemberSignature()
+	ms, _ := apihelper.NewMemberSignature()
 	seed := GetSeed(t)
 
 	request := insolar_api.MemberMigrationCreateRequest{
 		Jsonrpc: JSONRPCVersion,
-		Id:      GetRequestId(),
+		Id:      apihelper.GetRequestId(),
 		Method:  ContractCall,
 		Params: insolar_api.MemberMigrationCreateRequestParams{
 			Seed:       seed,
@@ -168,11 +164,11 @@ func MemberMigrationCreate(t *testing.T) MemberObject {
 			PublicKey:  string(ms.PemPublicKey),
 		},
 	}
-	d, s, m := Sign(request, ms.PrivateKey)
+	d, s, m := apihelper.Sign(request, ms.PrivateKey)
 	apilogger.LogApiRequest(request.Params.CallSite, request, m)
 	response, http, err := migrationApi.MemberMigrationCreate(nil, d, s, request)
 	apilogger.LogApiResponse(http, response)
-	CheckResponseHasNoError(t, response)
+	apihelper.CheckResponseHasNoError(t, response)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -204,11 +200,11 @@ func MemberMigrationCreate(t *testing.T) MemberObject {
 
 func (member *MemberObject) DepositTransfer(t *testing.T) insolar_api.DepositTransferResponse200 {
 	var err error
-	ms, _ := NewMemberSignature()
+	ms, _ := apihelper.NewMemberSignature()
 
 	request := insolar_api.DepositTransferRequest{
 		Jsonrpc: JSONRPCVersion,
-		Id:      GetRequestId(),
+		Id:      apihelper.GetRequestId(),
 		Method:  ContractCall,
 		Params: insolar_api.DepositTransferRequestParams{
 			Seed:     GetSeed(t),
@@ -222,11 +218,11 @@ func (member *MemberObject) DepositTransfer(t *testing.T) insolar_api.DepositTra
 		},
 	}
 
-	d, s, m := Sign(request, ms.PrivateKey)
+	d, s, m := apihelper.Sign(request, ms.PrivateKey)
 	apilogger.LogApiRequest(request.Params.CallSite, request, m)
 	response, http, err := migrationApi.DepositTransfer(nil, d, s, request)
 	apilogger.LogApiResponse(http, response)
-	CheckResponseHasNoError(t, response)
+	apihelper.CheckResponseHasNoError(t, response)
 	if err != nil {
 		log.Fatalln(err)
 	}
