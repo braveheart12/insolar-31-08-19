@@ -57,18 +57,23 @@ func TestMember(t *testing.T) {
 }
 
 func TestTransaction(t *testing.T) {
+	amount := "1"
 	member1 := apihelper.CreateMember(t)
 	member2 := apihelper.CreateMember(t)
-	transfer := member1.Transfer(t, member2.MemberReference, "1")
+	transfer := member1.Transfer(t, member2.MemberReference, amount)
 	apihelper.CheckResponseHasNoError(t, transfer)
 	apilogger.Println("Transfer OK. Fee: " + transfer.Result.CallResult.Fee)
 	require.NotEmpty(t, transfer.Result.CallResult.Fee, "Fee")
 
+	time.Sleep(60 * time.Second)
 	response := apihelper.Transaction(t, transfer.Result.RequestReference)
 
-	require.NotEmpty(t, response.Amount)
-	require.NotEmpty(t, response.Fee)
-	require.NotEmpty(t, response.FromMemberReference)
+	require.Equal(t, amount, response.Amount)
+	require.Equal(t, transfer.Result.CallResult.Fee, response.Fee)
+	require.Equal(t, member1.MemberReference, response.FromMemberReference)
+	require.Equal(t, member2.MemberReference, response.ToMemberReference)
+	require.Equal(t, "SUCCESS", response.Status)
+
 	require.Empty(t, response.Error)
 }
 
