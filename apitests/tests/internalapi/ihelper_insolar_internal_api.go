@@ -26,8 +26,9 @@ import (
 )
 
 const (
+	url = "http://localhost:19102"
+
 	JSONRPCVersion = "2.0"
-	url            = "http://localhost:19102"
 	ContractCall   = "contract.call"
 	// information_api
 	GetStatusMethod = "node.getStatus"

@@ -26,8 +26,9 @@ import (
 )
 
 const (
-	//url            = "http://localhost:19102"
-	url            = "https://wallet-api.qa-wallet.k8s-dev.insolar.io"
+	url = "http://localhost:19102"
+	//url            = "https://wallet-api.qa-wallet.k8s-dev.insolar.io"
+
 	JSONRPCVersion = "2.0"
 	ContractCall   = "contract.call"
 	// information_api
