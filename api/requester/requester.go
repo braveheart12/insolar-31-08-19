@@ -192,7 +192,7 @@ func doReq(req *http.Request) ([]byte, error) {
 
 // GetSeed makes rpc request to node.getSeed method and extracts it
 func GetSeed(url string) (string, error) {
-	body, err := GetResponseBodyPlatform(url+"/rpc", "node.getSeed", nil)
+	body, err := GetResponseBodyPlatform(url, "node.getSeed", nil)
 	if err != nil {
 		return "", errors.Wrap(err, "[ GetSeed ] seed request")
 	}
@@ -302,7 +302,7 @@ func Send(ctx context.Context, url string, userCfg *UserConfigJSON, params *Para
 	}
 	verboseInfo(ctx, "GETSEED request completed. seed: "+seed)
 
-	response, err := SendWithSeed(ctx, url+"/rpc", userCfg, params, seed)
+	response, err := SendWithSeed(ctx, url, userCfg, params, seed)
 	if err != nil {
 		return nil, errors.Wrap(err, "[ Send ]")
 	}
@@ -312,7 +312,7 @@ func Send(ctx context.Context, url string, userCfg *UserConfigJSON, params *Para
 
 // Info makes rpc request to network.getInfo method and extracts it
 func Info(url string) (*InfoResponse, error) {
-	body, err := GetResponseBodyPlatform(url+"/rpc", "network.getInfo", nil)
+	body, err := GetResponseBodyPlatform(url, "network.getInfo", nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "[ Info ]")
 	}
@@ -332,7 +332,7 @@ func Info(url string) (*InfoResponse, error) {
 
 // Status makes rpc request to node.getStatus method and extracts it
 func Status(url string) (*StatusResponse, error) {
-	body, err := GetResponseBodyPlatform(url+"/rpc", "node.getStatus", nil)
+	body, err := GetResponseBodyPlatform(url, "node.getStatus", nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "[ Status ]")
 	}
