@@ -20,7 +20,7 @@ import (
 	"github.com/insolar/insolar/apitests/tests/insolarapi"
 	"testing"
 
-	"github.com/insolar/insolar/apitests/apiclient/insolar_internal_api"
+	"github.com/insolar/insolar/apitests/apiclient/insolar_internal_api_new"
 	"github.com/insolar/insolar/apitests/apihelper/apilogger"
 	"github.com/stretchr/testify/require"
 )
@@ -155,7 +155,24 @@ func MigrationDeposit(t *testing.T) insolar_internal_api.DepositMigrationRespons
 }
 
 func ObserverToken(t *testing.T) insolar_internal_api.TokenResponse200 {
+	apilogger.Println(url + "/api/token")
 	response, http, err := internalObserverApi.TokenGetInfo(nil)
+	apilogger.LogApiResponse(http, response)
+	require.Nil(t, err)
+	return response
+}
+
+func ObserverAddressesCount(t *testing.T) insolar_internal_api.AddressesCountResponse200 {
+	apilogger.Println(url + "/admin/migration/addresses/count")
+	response, http, err := internalObserverApi.GetMigrationAddressCount(nil)
+	apilogger.LogApiResponse(http, response)
+	require.Nil(t, err)
+	return response
+}
+
+func ObserverGetMigrationAddresses(t *testing.T) []string { //todo query params not generate - bug
+	apilogger.Println(url + "/admin/migration/addresses")
+	response, http, err := internalObserverApi.GetMigrationAddresses(nil)
 	apilogger.LogApiResponse(http, response)
 	require.Nil(t, err)
 	return response

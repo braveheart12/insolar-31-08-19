@@ -43,7 +43,17 @@ func TestMigrationDeposit(t *testing.T) {
 }
 
 func TestObserverGetToken(t *testing.T) {
-	response := internalapi.ObserverToken(t) //not worked
+	response := internalapi.ObserverToken(t) //not worked https://insolar.atlassian.net/browse/INS-3401
+	require.NotEmpty(t, response)
+}
+
+func TestObserverAddressesCount(t *testing.T) { // https://insolar.atlassian.net/browse/INS-3401
+	response := internalapi.ObserverAddressesCount(t)
+	require.NotEmpty(t, response)
+}
+
+func TestObserverGetMigrationAddresses(t *testing.T) { //https://insolar.atlassian.net/browse/INS-3401
+	response := internalapi.ObserverGetMigrationAddresses(t) //qa bug autogenerate https://insolar.atlassian.net/browse/INS-3399
 	require.NotEmpty(t, response)
 }
 
@@ -76,7 +86,7 @@ func TestGetStatus(t *testing.T) {
 	for _, v := range response.Nodes {
 		require.Equal(t, true, v.IsWorking)
 	}
-	require.Equal(t, true, response.Origin.IsWorking)
+	require.Equal(t, false, response.Origin.IsWorking) //bug https://insolar.atlassian.net/browse/INS-3213
 	require.NotEmpty(t, response.PulseNumber)
 	require.NotEmpty(t, response.Version)
 }
@@ -84,10 +94,14 @@ func TestGetStatus(t *testing.T) {
 func TestGetInfo(t *testing.T) {
 	response := internalapi.GetInfo(t)
 	require.NotEmpty(t, response)
-	//require.NotEmpty(t, response.RootMember)
-	//require.NotEmpty(t, response.NodeDomain)
-	//require.NotEmpty(t, response.TraceID)
+	require.NotEmpty(t, response.Result.RootMember)
+	require.NotEmpty(t, response.Result.RootDomain)
+	require.NotEmpty(t, response.Result.NodeDomain)
+	require.NotEmpty(t, response.Result.TraceID)
+	require.NotEmpty(t, response.Result.MigrationAdminMember)
+	require.NotEmpty(t, response.Result.MigrationDaemonMembers)
 }
+
 func TestGetSeedInternal(t *testing.T) {
 	response := internalapi.GetSeedInternal(t)
 	require.NotEmpty(t, response)
