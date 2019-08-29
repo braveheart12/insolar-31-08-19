@@ -645,10 +645,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:78a2a3581a6d07f1776023ce3409d3025219be07426d1501413174562eab9538"
+  digest = "1:c2ab7259f615f7f10505fbb67ccefa010d74f609bf29c1f580d5c97fc9b5b8e7"
   name = "golang.org/x/net"
   packages = [
     "context",
+    "context/ctxhttp",
     "http/httpguts",
     "http2",
     "http2/h2c",
@@ -659,6 +660,17 @@
   ]
   pruneopts = "UT"
   revision = "ba9fcec4b297b415637633c5a6e8fa592e4a16c3"
+
+[[projects]]
+  branch = "master"
+  digest = "1:8d1c112fb1679fa097e9a9255a786ee47383fa2549a3da71bcb1334a693ebcfe"
+  name = "golang.org/x/oauth2"
+  packages = [
+    ".",
+    "internal",
+  ]
+  pruneopts = "UT"
+  revision = "0f29369cfe4552d0e4bcddc57cc75f4d7e672a33"
 
 [[projects]]
   branch = "master"
@@ -729,6 +741,22 @@
   pruneopts = "UT"
   revision = "feb0267beb8644f5088a03be4d5ec3f8c7020152"
   version = "v0.9.0"
+
+[[projects]]
+  digest = "1:6eb6e3b6d9fffb62958cf7f7d88dbbe1dd6839436b0802e194c590667a40412a"
+  name = "google.golang.org/appengine"
+  packages = [
+    "internal",
+    "internal/base",
+    "internal/datastore",
+    "internal/log",
+    "internal/remote_api",
+    "internal/urlfetch",
+    "urlfetch",
+  ]
+  pruneopts = "UT"
+  revision = "5f2a59506353b8d5ba8cbbcd9f3c1f41f1eaf079"
+  version = "v1.6.2"
 
 [[projects]]
   branch = "master"
@@ -850,6 +878,7 @@
     "golang.org/x/net/context",
     "golang.org/x/net/http2",
     "golang.org/x/net/http2/h2c",
+    "golang.org/x/oauth2",
     "google.golang.org/genproto/googleapis/api/annotations",
     "google.golang.org/grpc",
     "google.golang.org/grpc/codes",

@@ -12,14 +12,17 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-////////////////////////////////////////////////////////////////////////////////
+///
+// +build apitests
 
 package insolarapi
 
 import (
+	"sync"
+	"testing"
+
 	"github.com/insolar/insolar/apitests/tests"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestMemberMinusTransfer(t *testing.T) {
@@ -37,10 +40,28 @@ func TestMemberMinusTransfer(t *testing.T) {
 	}
 }
 
-func TestMemberTransferToBadMember(t *testing.T) {
+func TestMemberTransferByIncorrectRef(t *testing.T) {
 	member1 := CreateMember(t)
 	transfer := member1.Transfer(t, "5gFY3nZ5uDPCCU2MwQbFSQ17XA2b1eUo9xp3p8AkdAB.11111111111111111111111111111111", "100")
 	error := tests.TestError{-32000, "member not found"} //https://insolar.atlassian.net/browse/INS-3309
 	require.Equal(t, error.Code, transfer.Error.Code)
 	require.Equal(t, error.Message, transfer.Error.Message)
+}
+
+// The identifier is to be incremented in every request and each response will contain a corresponding one.
+// The transfer request sends an amount of funds to member identified by a reference:
+func TestCreateTransferGetBalance(t *testing.T) {
+	var Wg sync.WaitGroup
+
+	member1 := CreateMember(t)
+	member2 := CreateMember(t)
+
+	count := 5
+	Wg.Add(count * 2)
+
+	for i := 0; i < count; i++ {
+		go member1.Transfer(t, member2.MemberReference, "1")
+		go member2.Transfer(t, member1.MemberReference, "1")
+	}
+	Wg.Wait()
 }

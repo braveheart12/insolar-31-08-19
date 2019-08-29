@@ -14,12 +14,14 @@
 // limitations under the License.
 //
 // +build smoke
+// +build apitests
 
 package smoketests
 
 import (
-	"github.com/insolar/insolar/apitests"
 	"testing"
+
+	"github.com/insolar/insolar/apitests"
 )
 
 func TestMain(m *testing.M) {
