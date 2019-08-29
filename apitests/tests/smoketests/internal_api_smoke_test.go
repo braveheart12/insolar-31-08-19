@@ -78,6 +78,12 @@ func TestMigrationActivateDaemon(t *testing.T) {
 	require.Empty(t, response.Error)
 }
 
+func TestMigrationCheckDaemon(t *testing.T) {
+	//response := internalapi.MigrationCheckDaemon(t, "")
+	//require.NotEmpty(t, response.Result)
+	//require.Empty(t, response.Error)
+}
+
 func TestGetStatus(t *testing.T) {
 	response := internalapi.GetStatus(t)
 	require.Equal(t, "CompleteNetworkState", response.NetworkState)
@@ -88,7 +94,7 @@ func TestGetStatus(t *testing.T) {
 	}
 	require.Equal(t, false, response.Origin.IsWorking) //bug https://insolar.atlassian.net/browse/INS-3213
 	require.NotEmpty(t, response.PulseNumber)
-	require.NotEmpty(t, response.Version)
+	require.NotEmpty(t, response.Version) //bug https://insolar.atlassian.net/browse/INS-3404
 }
 
 func TestGetInfo(t *testing.T) {

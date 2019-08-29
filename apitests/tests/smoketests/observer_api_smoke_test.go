@@ -29,7 +29,7 @@ import (
 )
 
 func TestNotification(t *testing.T) {
-	response := observerapi.Notification(t) //todo не понятно как работает
+	response := observerapi.Notification(t) //todo how this working?
 	require.NotEmpty(t, response.Notification)
 }
 
