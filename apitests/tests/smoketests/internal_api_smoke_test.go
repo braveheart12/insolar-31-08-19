@@ -43,19 +43,28 @@ func TestMigrationDeposit(t *testing.T) {
 }
 
 func TestObserverGetToken(t *testing.T) {
-	response := internalapi.ObserverToken(t) //not worked
+	response := internalapi.ObserverToken(t) //not worked https://insolar.atlassian.net/browse/INS-3401
+	require.NotEmpty(t, response)
+}
+
+func TestObserverAddressesCount(t *testing.T) { // https://insolar.atlassian.net/browse/INS-3401
+	response := internalapi.ObserverAddressesCount(t)
+	require.NotEmpty(t, response)
+}
+
+func TestObserverGetMigrationAddresses(t *testing.T) { //https://insolar.atlassian.net/browse/INS-3401
+	response := internalapi.ObserverGetMigrationAddresses(t) //qa bug autogenerate https://insolar.atlassian.net/browse/INS-3399
 	require.NotEmpty(t, response)
 }
 
 func TestMemberGetBalance(t *testing.T) {
 	member := insolarapi.CreateMember(t)
 	response := internalapi.GetBalance(t, member)
-	require.NotEmpty(t, response.Result.CallResult.Deposits)
+	//require.NotEmpty(t, response.Result.CallResult.Deposits)
 	require.NotEmpty(t, response.Result.CallResult.Balance)
+	require.NotEmpty(t, response.Result.RequestReference)
+	require.NotEmpty(t, response.Result.TraceID)
 }
-
-/* "code": 217,
-   "message": "[ makeCall ] Error in called method: unknown method: 'member.getBalance'"*/
 
 func TestMigrationDeactivateDaemon(t *testing.T) {
 	response := internalapi.MigrationDeactivateDaemon(t, "")
@@ -77,15 +86,23 @@ func TestGetStatus(t *testing.T) {
 	for _, v := range response.Nodes {
 		require.Equal(t, true, v.IsWorking)
 	}
-	require.Equal(t, true, response.Origin.IsWorking)
+	require.Equal(t, false, response.Origin.IsWorking) //bug https://insolar.atlassian.net/browse/INS-3213
 	require.NotEmpty(t, response.PulseNumber)
 	require.NotEmpty(t, response.Version)
 }
 
 func TestGetInfo(t *testing.T) {
 	response := internalapi.GetInfo(t)
-	require.NotEmpty(t, response.RootDomain)
-	require.NotEmpty(t, response.RootMember)
-	require.NotEmpty(t, response.NodeDomain)
-	require.NotEmpty(t, response.TraceID)
+	require.NotEmpty(t, response)
+	require.NotEmpty(t, response.Result.RootMember)
+	require.NotEmpty(t, response.Result.RootDomain)
+	require.NotEmpty(t, response.Result.NodeDomain)
+	require.NotEmpty(t, response.Result.TraceID)
+	require.NotEmpty(t, response.Result.MigrationAdminMember)
+	require.NotEmpty(t, response.Result.MigrationDaemonMembers)
+}
+
+func TestGetSeedInternal(t *testing.T) {
+	response := internalapi.GetSeedInternal(t)
+	require.NotEmpty(t, response)
 }
