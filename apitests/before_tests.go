@@ -1,3 +1,5 @@
+// +build apitests
+
 package apitests
 
 import (

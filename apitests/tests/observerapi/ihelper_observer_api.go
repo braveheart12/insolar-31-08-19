@@ -13,11 +13,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 ///
+// +build apitests
+
 package observerapi
 
 import (
-	"github.com/insolar/insolar/apitests/apihelper"
 	"testing"
+
+	"github.com/insolar/insolar/apitests/apihelper"
 
 	"github.com/insolar/insolar/apitests/apiclient/insolar_observer_api"
 	"github.com/insolar/insolar/apitests/apihelper/apilogger"

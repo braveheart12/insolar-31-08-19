@@ -14,15 +14,17 @@
 // limitations under the License.
 //
 // +build smoke
+// +build apitests
 
 package smoketests
 
 import (
-	"github.com/insolar/insolar/apitests/tests/insolarapi"
 	"testing"
 
+	"github.com/insolar/insolar/apitests/tests/insolarapi"
+
 	"github.com/insolar/insolar/apitests/tests/internalapi"
-	"github.com/satori/go.uuid"
+	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/require"
 )
 

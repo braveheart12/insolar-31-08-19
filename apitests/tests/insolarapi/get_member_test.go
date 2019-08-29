@@ -13,16 +13,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+// +build apitests
 
 package insolarapi
 
 import (
+	"testing"
+
 	"github.com/insolar/insolar/apitests/apiclient/insolar_api"
 	"github.com/insolar/insolar/apitests/apihelper"
 	"github.com/insolar/insolar/apitests/apihelper/apilogger"
 	"github.com/insolar/insolar/apitests/tests"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestGetNotExistMember(t *testing.T) {

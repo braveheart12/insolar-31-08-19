@@ -14,18 +14,20 @@
 // limitations under the License.
 //
 // +build smoke
+// +build apitests
 
 package smoketests
 
 import (
+	"testing"
+	"time"
+
 	"github.com/insolar/insolar/apitests/apiclient/insolar_observer_api"
 	"github.com/insolar/insolar/apitests/apihelper"
 	"github.com/insolar/insolar/apitests/apihelper/apilogger"
 	"github.com/insolar/insolar/apitests/tests/insolarapi"
 	"github.com/insolar/insolar/apitests/tests/observerapi"
 	"github.com/stretchr/testify/require"
-	"testing"
-	"time"
 )
 
 func TestNotification(t *testing.T) {

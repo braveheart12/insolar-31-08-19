@@ -14,16 +14,18 @@
 // limitations under the License.
 //
 // +build smoke
+// +build apitests
 
 package smoketests
 
 import (
 	"encoding/json"
-	"github.com/insolar/insolar/apitests/tests/insolarapi"
-	"github.com/insolar/insolar/apitests/tests/internalapi"
 	"io/ioutil"
 	"path/filepath"
 	"testing"
+
+	"github.com/insolar/insolar/apitests/tests/insolarapi"
+	"github.com/insolar/insolar/apitests/tests/internalapi"
 
 	"github.com/insolar/insolar/apitests/apihelper"
 	"github.com/insolar/insolar/apitests/apihelper/apilogger"

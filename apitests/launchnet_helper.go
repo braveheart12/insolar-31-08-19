@@ -1,3 +1,5 @@
+// +build apitests
+
 package apitests
 
 // The identifier is to be incremented in every request and each response will contain a corresponding one.
