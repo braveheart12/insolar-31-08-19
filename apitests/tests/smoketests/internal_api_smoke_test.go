@@ -79,11 +79,12 @@ func TestMigrationActivateDaemon(t *testing.T) {
 	require.Empty(t, response.Error)
 }
 
-//func TestMigrationCheckDaemon(t *testing.T) {
-//	response := internalapi.MigrationCheckDaemon(t, "")
-//	require.NotEmpty(t, response.Result)
-//	require.Empty(t, response.Error)
-//}
+func TestMigrationCheckDaemon(t *testing.T) {
+	info := internalapi.GetInfo(t)
+	response := internalapi.MigrationCheckDaemon(t, info.Result.MigrationAdminMember, info.Result.MigrationDaemonMembers[0])
+	require.NotEmpty(t, response.Result)
+	require.Empty(t, response.Error)
+}
 
 func TestGetStatus(t *testing.T) {
 	response := internalapi.GetStatus(t)

@@ -105,9 +105,10 @@ func GetInfo(t *testing.T) insolar_internal_api.NetworkGetInfoResponse200 {
 	return response
 }
 
-//todo add sign for admin member - very difficult parse string to PrivateKeyobj
 func AddMigrationAddresses(t *testing.T, addresses []string) insolar_internal_api.MigrationDeactivateDaemonResponse200 {
-	ms, _ := apihelper.NewMemberSignature()
+	privateKey, publicKey := apihelper.LoadAdminMemberKeys()
+	signature, err := apihelper.CreateMemberSignature(publicKey, privateKey)
+	require.Nil(t, err)
 	body := insolar_internal_api.MigrationAddAddressesRequest{
 		Jsonrpc: JSONRPCVersion,
 		Id:      apihelper.GetRequestId(),
@@ -118,11 +119,11 @@ func AddMigrationAddresses(t *testing.T, addresses []string) insolar_internal_ap
 			CallParams: insolar_internal_api.MigrationAddAddressesRequestParamsCallParams{
 				MigrationAddresses: addresses,
 			},
-			PublicKey: "",
-			Reference: getMigrationAdmin(t),
+			PublicKey: publicKey,
+			Reference: GetInfo(t).Result.MigrationAdminMember,
 		},
 	}
-	d, s, m := apihelper.Sign(body, ms.PrivateKey)
+	d, s, m := apihelper.Sign(body, signature.PrivateKey)
 	apilogger.LogApiRequest(body.Params.CallSite, body, m)
 	response, http, err := internalMigrationApi.AddMigrationAddresses(nil, d, s, body)
 	apilogger.LogApiResponse(http, response)
@@ -132,10 +133,10 @@ func AddMigrationAddresses(t *testing.T, addresses []string) insolar_internal_ap
 	return response
 }
 
-/*func MigrationCheckDaemon(t *testing.T, daemonRef string) insolar_internal_api.MigrationCheckDaemonResponse200 {
-	//ms, _ := apihelper.NewMemberSignature()
-	adminPriv, adminPub := apihelper.LoadAdminMemberKeys()
-
+func MigrationCheckDaemon(t *testing.T, adminReference string, daemonRef string) insolar_internal_api.MigrationCheckDaemonResponse200 {
+	privateKey, publicKey := apihelper.LoadAdminMemberKeys()
+	signature, err := apihelper.CreateMemberSignature(publicKey, privateKey)
+	require.Nil(t, err)
 	body := insolar_internal_api.MigrationCheckDaemonRequest{
 		Jsonrpc: JSONRPCVersion,
 		Id:      apihelper.GetRequestId(),
@@ -146,11 +147,11 @@ func AddMigrationAddresses(t *testing.T, addresses []string) insolar_internal_ap
 			CallParams: insolar_internal_api.MigrationCheckDaemonRequestParamsCallParams{
 				Reference: daemonRef,
 			},
-			PublicKey: adminPub,
-			Reference: getMigrationAdmin(t),
+			PublicKey: publicKey,
+			Reference: adminReference,
 		},
 	}
-	d, s, m := apihelper.Sign(body, adminPriv)
+	d, s, m := apihelper.Sign(body, signature.PrivateKey)
 	apilogger.LogApiRequest(body.Params.CallSite, body, m)
 	response, http, err := internalMigrationApi.MigrationCheckDaemon(nil, d, s, body)
 	apilogger.LogApiResponse(http, response)
@@ -158,7 +159,7 @@ func AddMigrationAddresses(t *testing.T, addresses []string) insolar_internal_ap
 	apihelper.CheckResponseHasNoError(t, response)
 	apilogger.Printf("response id: %d", response.Id)
 	return response
-}*/
+}
 
 func MigrationDeposit(t *testing.T) insolar_internal_api.DepositMigrationResponse200 {
 	body := insolar_internal_api.DepositMigrationRequest{
@@ -285,8 +286,4 @@ func MigrationActivateDaemon(t *testing.T, migrationDaemonReference string) inso
 	apihelper.CheckResponseHasNoError(t, response)
 	apilogger.Printf("response id: %d", response.Id)
 	return response
-}
-
-func getMigrationAdmin(t *testing.T) string {
-	return GetInfo(t).Result.MigrationAdminMember
 }
