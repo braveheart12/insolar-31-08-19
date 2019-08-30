@@ -13,7 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// +build smoke
 // +build apitests
 
 package smoketests
@@ -80,11 +79,11 @@ func TestMigrationActivateDaemon(t *testing.T) {
 	require.Empty(t, response.Error)
 }
 
-func TestMigrationCheckDaemon(t *testing.T) {
-	//response := internalapi.MigrationCheckDaemon(t, "")
-	//require.NotEmpty(t, response.Result)
-	//require.Empty(t, response.Error)
-}
+//func TestMigrationCheckDaemon(t *testing.T) {
+//	response := internalapi.MigrationCheckDaemon(t, "")
+//	require.NotEmpty(t, response.Result)
+//	require.Empty(t, response.Error)
+//}
 
 func TestGetStatus(t *testing.T) {
 	response := internalapi.GetStatus(t)

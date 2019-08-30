@@ -22,6 +22,7 @@ import (
 
 	"github.com/insolar/insolar/apitests/apihelper"
 	"github.com/insolar/insolar/apitests/tests/insolarapi"
+	"github.com/insolar/insolar/apitests/tests/observerapi"
 
 	"github.com/insolar/insolar/apitests/apiclient/insolar_internal_api"
 	"github.com/insolar/insolar/apitests/apihelper/apilogger"
@@ -31,8 +32,7 @@ import (
 const (
 	JSONRPCVersion = "2.0"
 	url            = "http://localhost:19003"
-	//url            = "https://wallet-api.qa-wallet.k8s-dev.insolar.io"
-	ContractCall = "contract.call"
+	ContractCall   = "contract.call"
 	// information_api
 	GetStatusMethod = "node.getStatus"
 	// migration_api
@@ -105,10 +105,9 @@ func GetInfo(t *testing.T) insolar_internal_api.NetworkGetInfoResponse200 {
 	return response
 }
 
-//todo add sign for admin member
+//todo add sign for admin member - very difficult parse string to PrivateKeyobj
 func AddMigrationAddresses(t *testing.T, addresses []string) insolar_internal_api.MigrationDeactivateDaemonResponse200 {
 	ms, _ := apihelper.NewMemberSignature()
-	adminPub, _ := apihelper.LoadAdminMemberKeys()
 	body := insolar_internal_api.MigrationAddAddressesRequest{
 		Jsonrpc: JSONRPCVersion,
 		Id:      apihelper.GetRequestId(),
@@ -119,7 +118,7 @@ func AddMigrationAddresses(t *testing.T, addresses []string) insolar_internal_ap
 			CallParams: insolar_internal_api.MigrationAddAddressesRequestParamsCallParams{
 				MigrationAddresses: addresses,
 			},
-			PublicKey: adminPub,
+			PublicKey: "",
 			Reference: getMigrationAdmin(t),
 		},
 	}
@@ -187,7 +186,7 @@ func MigrationDeposit(t *testing.T) insolar_internal_api.DepositMigrationRespons
 }
 
 func ObserverToken(t *testing.T) insolar_internal_api.TokenResponse200 {
-	apilogger.Println(url + "/api/token")
+	apilogger.Println(observerapi.ObserverUrl + "/api/token")
 	response, http, err := internalObserverApi.TokenGetInfo(nil)
 	apilogger.LogApiResponse(http, response)
 	require.Nil(t, err)
@@ -195,7 +194,7 @@ func ObserverToken(t *testing.T) insolar_internal_api.TokenResponse200 {
 }
 
 func ObserverAddressesCount(t *testing.T) insolar_internal_api.AddressesCountResponse200 {
-	apilogger.Println(url + "/admin/migration/addresses/count")
+	apilogger.Println(observerapi.ObserverUrl + "/admin/migration/addresses/count")
 	response, http, err := internalObserverApi.GetMigrationAddressCount(nil)
 	apilogger.LogApiResponse(http, response)
 	require.Nil(t, err)
@@ -203,7 +202,7 @@ func ObserverAddressesCount(t *testing.T) insolar_internal_api.AddressesCountRes
 }
 
 func ObserverGetMigrationAddresses(t *testing.T) []string { //todo query params not generate - bug
-	apilogger.Println(url + "/admin/migration/addresses")
+	apilogger.Println(observerapi.ObserverUrl + "/admin/migration/addresses")
 	response, http, err := internalObserverApi.GetMigrationAddresses(nil)
 	apilogger.LogApiResponse(http, response)
 	require.Nil(t, err)
@@ -227,18 +226,11 @@ func GetBalance(t *testing.T, member insolarapi.MemberObject) insolar_internal_a
 	}
 	d, s, m := apihelper.Sign(body, member.Signature.PrivateKey)
 	apilogger.LogApiRequest(body.Params.CallSite, body, m)
-	response, http, _ := internalMemberApi.GetBalance(nil, d, s, body)
+	response, http, err := internalMemberApi.GetBalance(nil, d, s, body)
 	apilogger.LogApiResponse(http, response)
-	//require.Nil(t, err)//todo
-	/* "error": {
-	    "data": {
-	        "requestReference": "",
-	        "traceID": "",
-	        "trace": null
-	    },
-	    "code": 0,
-	    "message": ""
-	}*/
+	apilogger.Println(string(err.Error()))
+	require.Nil(t, err.Error())
+
 	require.NotEmpty(t, response.Result.CallResult.Balance)
 	return response
 }
